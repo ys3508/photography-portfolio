@@ -1,0 +1,145 @@
+---
+/**
+ * 背景音乐开关 —— 石膏像的眼睛。
+ *
+ * 规矩：
+ *   · 绝不自动播放。访客点一下才开始，再点一下停。
+ *   · 音频 preload="none"，不点就一个字节都不下载。
+ *   · 选择记在 localStorage；换页时尝试接着放，浏览器不允许就安静地回到「关」。
+ */
+import { SITE } from '../config/site';
+import { withBase } from '../lib/paths';
+
+const enabled = SITE.audio.trim().length > 0;
+---
+
+{
+  enabled && (
+    <>
+      <audio
+        data-sound-el
+        data-volume={String(SITE.audioVolume)}
+        src={withBase(SITE.audio)}
+        preload="none"
+        loop
+        playsinline
+      />
+
+      <button
+        class="sound"
+        data-sound-toggle
+        type="button"
+        aria-pressed="false"
+        aria-label="播放背景音乐"
+      >
+        <span class="label" data-sound-label aria-hidden="true">
+          开启音乐
+        </span>
+        <span class="eye">
+          <img src={withBase('texture/marble-mark.webp')} alt="" width="320" height="320" />
+          <span class="ring" aria-hidden="true" />
+        </span>
+      </button>
+    </>
+  )
+}
+
+<style>
+  .sound {
+    position: fixed;
+    right: clamp(1rem, 2.4vw, 2rem);
+    bottom: clamp(1rem, 2.4vw, 2rem);
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+  }
+
+  /* ---------- 那只眼睛 ---------- */
+  .eye {
+    position: relative;
+    display: block;
+    width: clamp(2.75rem, 3.6vw, 3.4rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--photo-rest);
+    flex: 0 0 auto;
+  }
+
+  .eye img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 关着的时候退一步，开了才完全醒过来 */
+    filter: saturate(0.5) brightness(0.92);
+    opacity: 0.72;
+    transition: filter 700ms var(--ease), opacity 700ms var(--ease), transform 900ms var(--ease);
+  }
+
+  .sound:hover .eye img {
+    opacity: 0.92;
+    transform: scale(1.04);
+  }
+
+  .sound[aria-pressed='true'] .eye img {
+    filter: saturate(1) brightness(1);
+    opacity: 1;
+  }
+
+  /* 播放时一圈极慢的呼吸，替代常见的跳动音波 */
+  .ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    transition: border-color 600ms var(--ease);
+  }
+
+  .sound[aria-pressed='true'] .ring {
+    border-color: var(--accent);
+    animation: breathe 4.5s var(--ease) infinite;
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 38%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent);
+    }
+  }
+
+  /* ---------- 标签：平时不出现 ---------- */
+  .label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(0.5rem);
+    transition: opacity 450ms var(--ease), transform 450ms var(--ease);
+    pointer-events: none;
+  }
+
+  .sound:hover .label,
+  .sound:focus-visible .label {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* 手机没有 hover，直接把标签藏掉，只留那只眼睛 */
+  @media (hover: none) {
+    .label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sound[aria-pressed='true'] .ring {
+      animation: none;
+    }
+  }
+</style>

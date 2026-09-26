@@ -41,9 +41,25 @@ const base = sharp(source)
 await base.clone().webp({ quality: 82, effort: 5 }).toFile(path.join(OUT_DIR, 'marble-head.webp'));
 await base.clone().avif({ quality: 58, effort: 4 }).toFile(path.join(OUT_DIR, 'marble-head.avif'));
 
+/*
+  声音按钮用的小头像：从原图里切一块正方形（眼睛与额头那一带），
+  不降饱和 —— 它是个按钮，要看得清是谁在看你。
+*/
+const src = await sharp(source).rotate().metadata();
+const side = Math.round(Math.min(src.width, src.height) * 0.46);
+const left = Math.round(src.width * 0.05);
+const top = Math.round(src.height * 0.2);
+
+await sharp(source)
+  .rotate()
+  .extract({ left, top, width: side, height: side })
+  .resize(320, 320, { kernel: 'lanczos3' })
+  .webp({ quality: 88 })
+  .toFile(path.join(OUT_DIR, 'marble-mark.webp'));
+
 const meta = await sharp(path.join(OUT_DIR, 'marble-head.webp')).metadata();
 console.log(`\n底纹已生成 ${meta.width}×${meta.height}`);
-for (const f of ['marble-head.webp', 'marble-head.avif']) {
+for (const f of ['marble-head.webp', 'marble-head.avif', 'marble-mark.webp']) {
   const s = await fs.stat(path.join(OUT_DIR, f));
   console.log(`  ${f}  ${(s.size / 1024).toFixed(0)} KB`);
 }

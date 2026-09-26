@@ -4,6 +4,7 @@ import { SITE, DAY_START, DAY_END } from '../config/site';
 import { withBase } from '../lib/paths';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SoundToggle from '../components/SoundToggle.astro';
 
 interface Props {
   title?: string;
@@ -98,11 +99,13 @@ const ogImageUrl = new URL(withBase(SITE.ogImage), Astro.site ?? 'https://exampl
       <slot />
     </main>
     <SiteFooter />
+    <SoundToggle />
 
     <script>
       import '../scripts/theme';
       import '../scripts/reveal';
       import '../scripts/lightbox';
+      import '../scripts/sound';
     </script>
 
     <style>

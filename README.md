@@ -68,7 +68,7 @@ npm run dev
 | `npm run check` | 检查代码有没有类型错误 |
 | `npm run import:photos` | **从 iCloud 精品集导入照片**（最常用） |
 | `npm run placeholders` | 重新生成占位图（还没有真照片时用） |
-| `npm run texture` | 重新生成背景大理石底纹 |
+| `npm run texture` | 重新生成背景大理石底纹 + 声音按钮那只眼睛 |
 
 ---
 
@@ -219,6 +219,25 @@ export const STATEMENT = {
 只要挪动星号的位置，不用碰任何组件。
 
 这段文字在**首页「关于摄影师」一节**和 **/about 页面**共用，只写一次。
+
+### 背景音乐
+
+右下角那只**石膏像的眼睛**就是开关。规矩：
+
+- **绝不自动播放。** 第一次进网站一定是安静的，访客点了才响。
+- 音频 `preload="none"`，**不点就一个字节都不下载**（这首 3.9 MB）。
+- 音量渐入渐出，不会「啪」一下出声；默认音量 0.4。
+- 开 / 关记在 `localStorage`，换页时尝试接着放（连播到第几秒都记着）；
+  浏览器不允许自动播就安静地回到「关」，不弹任何提示。
+- 全屏看图时按钮自动藏起来（层级 70 < Lightbox 120）。
+
+**换一首**：把 mp3 放进 `public/audio/`，改 `src/config/site.ts` 里的 `audio` 路径。
+**不要音乐**：把 `audio` 改成空字符串 `''`，按钮会整个消失。
+音量改 `audioVolume`。
+
+> ⚠️ **版权**：网站是公开的，放上去的音乐等于对外发布。
+> 现在这首是商业卡拉 OK 伴奏带（Louis Armstrong《We Have All the Time in the World》，
+> 词曲 John Barry / Hal David）。用之前请确认授权，或换成可商用授权的曲子。
 
 ### 换背景底纹 / 改朱红
 

@@ -64,3 +64,6 @@ temp/
 /greek_statues.jpg
 /red.png
 design-source/
+
+# 背景音乐源文件（网站用的副本在 public/audio/）
+design-source/audio/

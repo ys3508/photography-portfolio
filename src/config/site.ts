@@ -33,6 +33,14 @@ export const SITE = {
   portraitAlt: '摄影师王宇',
   /** 版权起始年份 */
   copyrightSince: 2026,
+
+  /**
+   * 背景音乐。
+   * 绝不自动播放 —— 访客点了石膏像那个按钮才开始。
+   * 不需要音乐就把 audio 设成空字符串，按钮会整个消失。
+   */
+  audio: 'audio/all-the-time-in-the-world.mp3',
+  audioVolume: 0.4,
 } as const;
 
 /**
