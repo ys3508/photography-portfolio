@@ -1,0 +1,178 @@
+---
+/**
+ * 沉浸式全屏看图。
+ * 交互：← → 切换 / ESC 关闭 / 手机左右滑动 / 点击空白关闭。
+ * UI 尽量少：只有计数、必要的箭头，以及低调的标题 / 年份 / 地点。
+ */
+import { photos } from '../lib/gallery';
+import { withBase } from '../lib/paths';
+
+const payload = photos.map((p) => ({
+  src: withBase(p.src),
+  thumb: withBase(p.thumbnail),
+  w: p.width,
+  h: p.height,
+  title: p.title,
+  year: p.year,
+  location: p.location,
+  caption: p.caption,
+}));
+---
+
+<script type="application/json" id="gallery-data" set:html={JSON.stringify(payload)} />
+
+<div class="lightbox" data-lightbox hidden role="dialog" aria-modal="true" aria-label="照片全屏浏览">
+  <button class="close" data-lightbox-close type="button" aria-label="关闭 (ESC)">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"
+      ><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.1" fill="none"
+      ></path></svg
+    >
+  </button>
+
+  <button class="nav prev" data-lightbox-prev type="button" aria-label="上一张 (←)">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"
+      ><path d="M15 4L7 12l8 8" stroke="currentColor" stroke-width="1.1" fill="none"></path></svg
+    >
+  </button>
+
+  <figure class="stage" data-lightbox-stage>
+    <img data-lightbox-image alt="" />
+    <figcaption class="caption" data-lightbox-caption></figcaption>
+  </figure>
+
+  <button class="nav next" data-lightbox-next type="button" aria-label="下一张 (→)">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"
+      ><path d="M9 4l8 8-8 8" stroke="currentColor" stroke-width="1.1" fill="none"></path></svg
+    >
+  </button>
+
+  <p class="counter" data-lightbox-counter aria-live="polite"></p>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    background: var(--overlay);
+    color: var(--overlay-text);
+    opacity: 0;
+    transition: opacity 400ms var(--ease);
+    padding: clamp(3.5rem, 7vh, 5rem) clamp(0.5rem, 3vw, 3rem);
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+  }
+
+  .lightbox[hidden] {
+    display: none !important;
+  }
+
+  .lightbox.is-open {
+    opacity: 1;
+  }
+
+  .stage {
+    grid-column: 2;
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .stage img {
+    max-width: 100%;
+    max-height: calc(100svh - 11rem);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 450ms var(--ease);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .stage img.is-ready {
+    opacity: 1;
+  }
+
+  .caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(238, 236, 231, 0.62);
+    min-height: 1em;
+    text-align: center;
+  }
+
+  .close {
+    position: absolute;
+    top: clamp(1rem, 3vh, 1.75rem);
+    right: clamp(1rem, 3vw, 2rem);
+    color: inherit;
+    opacity: 0.6;
+    transition: opacity 300ms var(--ease);
+  }
+
+  .close:hover {
+    opacity: 1;
+  }
+
+  .nav {
+    color: inherit;
+    opacity: 0.45;
+    padding: 1.5rem 0.75rem;
+    transition: opacity 300ms var(--ease);
+  }
+
+  .nav:hover {
+    opacity: 1;
+  }
+
+  .prev {
+    grid-column: 1;
+  }
+
+  .next {
+    grid-column: 3;
+  }
+
+  .counter {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: clamp(1rem, 3vh, 1.75rem);
+    margin: 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    color: rgba(238, 236, 231, 0.62);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 手机：隐藏箭头，改用滑动，把画面完全交给照片 */
+  @media (max-width: 720px), (hover: none) {
+    .lightbox {
+      grid-template-columns: 1fr;
+      padding: 3.5rem 0.75rem 4rem;
+    }
+    .nav {
+      display: none;
+    }
+    .stage {
+      grid-column: 1;
+    }
+    .stage img {
+      max-height: calc(100svh - 9rem);
+    }
+  }
+</style>
