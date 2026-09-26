@@ -107,11 +107,12 @@ if (dataNode && root) {
   btnPrev.addEventListener('click', () => show(index - 1));
   btnNext.addEventListener('click', () => show(index + 1));
 
-  // 点击照片以外的空白处关闭
+  // 点照片周围的任何空白处都关闭；只有照片本身和三个按钮不触发
   root.addEventListener('click', (event) => {
-    if (event.target === root || (event.target as HTMLElement).classList.contains('stage')) {
-      close();
-    }
+    const el = event.target as HTMLElement | null;
+    if (!el) return;
+    if (el.tagName === 'IMG' || el.closest('button')) return;
+    close();
   });
 
   /* ---------- 键盘 ---------- */

@@ -1,11 +1,17 @@
 ---
-/** 05 关于摄影师 —— 首页上的简短一段，完整内容在 /about。 */
+/** 首页「关于摄影师」—— 正文在左（干净的一侧），人像在右（朱染的深色一侧）。 */
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
+import ArtistBio from './ArtistBio.astro';
 ---
 
 <section class="about section" aria-labelledby="about-title">
   <div class="shell inner">
+    <div class="text">
+      <p class="eyebrow reveal" id="about-title">关于摄影师</p>
+      <ArtistBio />
+    </div>
+
     <figure class="portrait reveal clip-reveal">
       <span class="frame portrait-frame">
         <img
@@ -18,20 +24,6 @@ import { withBase } from '../lib/paths';
         />
       </span>
     </figure>
-
-    <div class="text">
-      <p class="eyebrow reveal" id="about-title">关于摄影师</p>
-      <figure class="seal reveal" style="--reveal-delay: 100ms">
-        <span class="seal-mark">{SITE.motto}</span>
-        <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
-      </figure>
-      {SITE.statement && (
-        <p class="body-text reveal" style="--reveal-delay: 180ms">{SITE.statement}</p>
-      )}
-      <p class="reveal" style="--reveal-delay: 260ms">
-        <a class="link" href={withBase('about')}>关于摄影师</a>
-      </p>
-    </div>
   </div>
 </section>
 
@@ -48,23 +40,24 @@ import { withBase } from '../lib/paths';
   .inner {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: center;
-  }
-
-  .portrait {
-    order: 2;
-    justify-self: end;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
   }
 
   .text {
-    order: 1;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .text > p {
+    margin: 0;
   }
 
   .portrait {
     margin: 0;
     max-width: 26rem;
     width: 100%;
+    justify-self: end;
   }
 
   .portrait-frame {
@@ -82,20 +75,11 @@ import { withBase } from '../lib/paths';
     object-fit: cover;
   }
 
-  .text {
-    display: grid;
-    gap: clamp(1.5rem, 3vw, 2.25rem);
-    align-content: center;
-  }
-
-  .text p {
-    margin: 0;
-  }
-
   @media (max-width: 860px) {
     .inner {
       grid-template-columns: 1fr;
     }
+
     .portrait {
       order: 2;
       max-width: 18rem;

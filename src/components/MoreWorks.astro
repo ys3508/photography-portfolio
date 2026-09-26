@@ -7,14 +7,12 @@ import PhotoFrame from './PhotoFrame.astro';
 const featuredIds = new Set(featuredPhotos.map((p) => p.id));
 // 只放还没在首页出现过的作品；不足两张就不摆这条预览带，一张孤零零的很难看
 const strip = photos.filter((p) => !featuredIds.has(p.id)).slice(0, 4);
-const total = photos.length;
 ---
 
 <section class="more section" aria-labelledby="more-title">
   <div class="shell">
     <header class="section-head">
       <h2 class="section-title reveal" id="more-title">更多作品</h2>
-      <p class="meta reveal">全部 {total} 张</p>
     </header>
 
     {

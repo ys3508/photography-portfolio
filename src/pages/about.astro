@@ -2,8 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
-import { photos } from '../lib/gallery';
 import MarbleGround from '../components/MarbleGround.astro';
+import ArtistBio from '../components/ArtistBio.astro';
 ---
 
 <BaseLayout title="关于" description={`关于摄影师 ${SITE.photographerName}`}>
@@ -13,7 +13,6 @@ import MarbleGround from '../components/MarbleGround.astro';
     <div class="shell above-ground">
       <header class="section-head">
         <h1 class="section-title reveal">关于摄影师</h1>
-        <p class="meta reveal">{photos.length} 张作品</p>
       </header>
 
       <div class="about-grid">
@@ -36,12 +35,7 @@ import MarbleGround from '../components/MarbleGround.astro';
             <span class="seal-mark">{SITE.motto}</span>
             <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
           </figure>
-          {SITE.statement && (
-            <p class="body-text reveal" style="--reveal-delay: 120ms">{SITE.statement}</p>
-          )}
-          {SITE.aboutExtra && (
-            <p class="body-text reveal" style="--reveal-delay: 200ms">{SITE.aboutExtra}</p>
-          )}
+          <ArtistBio />
           <p class="reveal" style="--reveal-delay: 280ms">
             <a class="link" href={withBase('gallery')}>查看全部作品</a>
           </p>

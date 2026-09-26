@@ -182,16 +182,16 @@ content/photo-meta.json       照片信息表（会新增条目，已填的内�
 ```ts
 export const SITE = {
   photographerName: '王宇',              // 导航品牌名 + 首页刊头 + 网页标题
-  photographerNameLatin: 'Yu Wang',      // 拼音 / 英文名，留空则不显示
+  photographerNameLatin: 'Yu Wang',      // 拼音 / 英文名
 
   motto: '思',                           // 摄影理念那一个字
-  mottoLatin: 'Think and feel the world',// 它的英文
+  mottoLatin: 'Think and feel the world',
+  creed: '观看，是为了看见自己',           // 封面「思」下面那一句
+  creedLatin: 'To observe is to encounter oneself.',
 
-  statement: '',                         // 80–150 字摄影陈述；留空时页面只呈现「思」
-  aboutExtra: '',                        // 关于页面的补充段落
   email: '',                             // 留空则页脚不显示联系方式
   description: '...',                    // 分享到微信 / 搜索引擎时的说明
-  ogImage: 'photos/share/og-cover.jpg',  // 分享预览图
+  ogImage: 'photos/share/og-cover.jpg',
   portrait: 'photos/portrait/portrait.jpg',
 };
 
@@ -199,11 +199,26 @@ export const DAY_START = 7;   // 7:00–19:00 白天模式
 export const DAY_END = 19;    // 其余时间夜晚模式
 ```
 
-`motto` 与 `mottoLatin` 成对出现，像一方钤印 —— 首页封面、摄影陈述、关于页共用同一套排法。
+`motto` / `mottoLatin` / `creed` / `creedLatin` 成对出现，像一方钤印 —— 首页封面用全套，
+关于页只用前一对。
 
-**关于 `statement`**：现在是空的。留空时，「摄影陈述」一节只呈现居中的「思」和它的英文，
-页面依然完整、甚至更安静。等王宇本人写好 80–150 字，填进去就会自动出现在「思」的下方。
-**不要由他人代写。**
+### 改「关于摄影师」的文字
+
+同一个文件里的 `STATEMENT`：
+
+```ts
+export const STATEMENT = {
+  lead: '王宇，观念摄影师、视觉哲思者。',   // 一句话身份
+  opening: '对他而言，摄影不仅是记录…',     // 开头一段
+  creed: '观看，是为了看见自己。',          // 单独拎出来的那一句，朱红
+  body: ['他行走于…', '他的创作围绕…', '他的影像…'],  // 其余段落
+};
+```
+
+正文里用 **两个星号** 包起来的词会以朱红强调。想换强调哪几个词，
+只要挪动星号的位置，不用碰任何组件。
+
+这段文字在**首页「关于摄影师」一节**和 **/about 页面**共用，只写一次。
 
 ### 换背景底纹 / 改朱红
 

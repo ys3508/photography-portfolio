@@ -12,12 +12,11 @@
  */
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
-import { photos, heroPhotos } from '../lib/gallery';
+import { photos, heroPhotos, indexOf } from '../lib/gallery';
 import MarbleGround from './MarbleGround.astro';
 
 const lead = heroPhotos[0] ?? photos[0];
 const second = heroPhotos[1] ?? photos[1];
-const total = photos.length;
 
 function describe(photo: (typeof photos)[number] | undefined, fallback: string) {
   if (!photo) return fallback;
@@ -37,7 +36,13 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     {
       second && (
         <figure class="plate plate-second">
-          <span class="frame" style={`aspect-ratio: ${second.width} / ${second.height};`}>
+          <button
+            class="frame"
+            style={`aspect-ratio: ${second.width} / ${second.height};`}
+            data-lightbox-open
+            data-index={indexOf(second)}
+            aria-label={`放大查看：${describe(second, '摄影作品')}`}
+          >
             <img
               src={withBase(second.thumbnail)}
               width={second.width}
@@ -48,7 +53,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
               decoding="async"
               data-loaded="false"
             />
-          </span>
+          </button>
         </figure>
       )
     }
@@ -71,7 +76,13 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       {
         lead && (
           <figure class="plate plate-lead">
-            <span class="frame" style={`aspect-ratio: ${lead.width} / ${lead.height};`}>
+            <button
+              class="frame"
+              style={`aspect-ratio: ${lead.width} / ${lead.height};`}
+              data-lightbox-open
+              data-index={indexOf(lead)}
+              aria-label={`放大查看：${describe(lead, '代表摄影作品')}`}
+            >
               <img
                 src={withBase(lead.src)}
                 width={lead.width}
@@ -83,7 +94,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
                 decoding="async"
                 data-loaded="false"
               />
-            </span>
+            </button>
           </figure>
         )
       }
@@ -92,12 +103,12 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     <figure class="seal tagline">
       <span class="seal-mark">{SITE.motto}</span>
       <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
+      <figcaption class="creed">
+        <span class="creed-zh">{SITE.creed}</span>
+        <span class="creed-en">{SITE.creedLatin}</span>
+      </figcaption>
     </figure>
 
-    <div class="ledger on-wash">
-      <span class="meta">精品集</span>
-      <span class="meta">共 {total} 张</span>
-    </div>
   </div>
 
   <div class="scroll-cue" aria-hidden="true"><span></span></div>
@@ -109,7 +120,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     min-height: 100svh;
     display: flex;
     align-items: center;
-    padding-block: clamp(5rem, 10.5vh, 7rem) clamp(2.5rem, 6vh, 4rem);
+    padding-block: clamp(4.5rem, 9vh, 6.25rem) clamp(2.25rem, 5.5vh, 3.5rem);
     overflow: hidden;
   }
 
@@ -149,8 +160,15 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     margin: 0;
   }
 
-  .plate .frame {
+  /* 人像不是作品，不可点；两张摄影作品可以点开看大图 */
+  .plate-portrait .frame {
     cursor: default;
+  }
+
+  .plate button.frame {
+    border: 0;
+    padding: 0;
+    display: block;
   }
 
   /* 右上角的小作品 */
@@ -192,7 +210,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     display: block;
     position: relative;
     aspect-ratio: 4 / 5;
-    height: clamp(9.5rem, 28svh, 18.5rem);
+    height: clamp(8.5rem, 25svh, 17rem);
     width: auto;
     overflow: hidden;
     background: var(--photo-rest);
@@ -219,7 +237,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
   }
 
   .plate-lead .frame {
-    height: clamp(14.5rem, 43svh, 31rem);
+    height: clamp(12.5rem, 36svh, 26.5rem);
     width: auto;
     max-width: 100%;
   }
@@ -231,21 +249,34 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     margin: clamp(1.75rem, 4.5vh, 3rem) 0 0;
   }
 
-  .tagline .seal-mark {
-    font-size: clamp(3rem, 5.2vw, 4.75rem);
+  .tagline {
+    grid-column: 1 / 9;
   }
 
-  .ledger {
-    grid-column: 10 / 13;
-    grid-row: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.3rem;
-    text-align: right;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-size: 0.625rem;
+  .tagline .seal-mark {
+    font-size: clamp(2.75rem, 4.6vw, 4.25rem);
+  }
+
+  .creed {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: clamp(0.4rem, 0.7vw, 0.6rem);
+  }
+
+  .creed-zh {
+    font-family: var(--font-serif);
+    font-size: clamp(1.0625rem, 1.55vw, 1.375rem);
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
+
+  .creed-en {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
   }
 
   /* ---------- 滚动提示 ---------- */
@@ -340,15 +371,8 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       margin: clamp(1.75rem, 7vw, 2.75rem) 0 0;
     }
 
-    .ledger {
-      grid-column: 1 / -1;
-      grid-row: 5;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1.75rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--line);
+    .creed-zh {
+      font-size: 1.0625rem;
     }
 
     .scroll-cue {
