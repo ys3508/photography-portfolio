@@ -28,7 +28,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
     <div class="spread">
       {
         one && (
-          <div class:list={['slot', 'slot-one', 'reveal', 'clip-reveal', !isWide(one) && 'is-tall']}>
+          <div class:list={['slot', 'slot-one', 'reveal', 'clip-reveal', isWide(one) && 'is-wide']}>
             <PhotoFrame
               photo={one}
               index={indexOf(one)}
@@ -42,7 +42,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
 
       {
         two && (
-          <div class="slot slot-two reveal clip-reveal">
+          <div class:list={['slot', 'slot-two', 'reveal', 'clip-reveal', isWide(two) && 'is-wide']}>
             <PhotoFrame photo={two} index={indexOf(two)} sizes="(max-width: 860px) 70vw, 34vw" />
           </div>
         )
@@ -51,7 +51,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
 
       {
         three && (
-          <div class:list={['slot', 'slot-three', 'reveal', 'clip-reveal', !isWide(three) && 'is-tall']}>
+          <div class:list={['slot', 'slot-three', 'reveal', 'clip-reveal', isWide(three) && 'is-wide']}>
             <PhotoFrame
               photo={three}
               index={indexOf(three)}
@@ -64,7 +64,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
 
       {
         four && (
-          <div class="slot slot-four reveal clip-reveal">
+          <div class:list={['slot', 'slot-four', 'reveal', 'clip-reveal', isWide(four) && 'is-wide']}>
             <PhotoFrame photo={four} index={indexOf(four)} sizes="(max-width: 860px) 46vw, 30vw" />
           </div>
         )
@@ -72,7 +72,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
 
       {
         five && (
-          <div class="slot slot-five reveal clip-reveal" style="--reveal-delay: 140ms">
+          <div class:list={['slot', 'slot-five', 'reveal', 'clip-reveal', isWide(five) && 'is-wide']} style="--reveal-delay: 140ms">
             <PhotoFrame photo={five} index={indexOf(five)} sizes="(max-width: 860px) 46vw, 26vw" />
           </div>
         )
@@ -91,42 +91,67 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--gutter);
-    row-gap: clamp(3rem, 9vw, 8rem);
-    align-items: end;
+    row-gap: clamp(3rem, 8vw, 6.5rem);
+    align-items: start;
   }
 
-  /* 01 主图，略微右偏，留出左侧空白 */
+  /*
+    每张照片占的「面积」尽量接近 —— 差别太大会显得随意。
+    做法不是统一宽度（那会让竖图高得离谱），而是按比例分配列数：
+    竖构图占 5 列，横构图占 8 列，两者渲染出来的面积几乎相同。
+    变化交给位置与错落，不交给大小。
+  */
+  .slot {
+    grid-column: span 5;
+  }
+
+  .slot.is-wide {
+    grid-column: span 8;
+  }
+
+  /* 01 开篇：尺寸和其余几张一样，只是居中独占一行 */
   .slot-one {
-    grid-column: 3 / 13;
+    grid-column: 4 / 9;
   }
 
-  /* 竖构图时收窄，否则满幅的竖图会高得吓人 */
-  .slot-one.is-tall {
-    grid-column: 5 / 12;
+  .slot-one.is-wide {
+    grid-column: 3 / 11;
   }
 
-  /* 02 较小的竖图，靠左；右侧是呼吸空间与一句说明 */
+  /* 02 / 03 一对：左右分开，右边那张往下错 */
   .slot-two {
-    grid-column: 2 / 6;
+    grid-column: 1 / 6;
   }
 
-  /* 03 宽幅，几乎满幅；若是竖构图则居中收窄 */
+  .slot-two.is-wide {
+    grid-column: 1 / 9;
+  }
+
   .slot-three {
-    grid-column: 1 / 13;
+    grid-column: 8 / 13;
+    margin-top: clamp(2.5rem, 7vw, 6rem);
   }
 
-  .slot-three.is-tall {
-    grid-column: 4 / 11;
+  .slot-three.is-wide {
+    grid-column: 5 / 13;
   }
 
-  /* 04 / 05 两张互相对话的小作品：一高一低 */
+  /* 04 / 05 再一对：错落的方向反过来 */
   .slot-four {
     grid-column: 2 / 7;
+    margin-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .slot-four.is-wide {
+    grid-column: 1 / 9;
   }
 
   .slot-five {
-    grid-column: 8 / 12;
-    margin-bottom: clamp(3rem, 9vw, 7rem);
+    grid-column: 8 / 13;
+  }
+
+  .slot-five.is-wide {
+    grid-column: 5 / 13;
   }
 
   @media (max-width: 860px) {
@@ -135,26 +160,20 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
       row-gap: clamp(2.25rem, 7vw, 3.5rem);
     }
 
+    .slot,
+    .slot.is-wide,
     .slot-one,
-    .slot-one.is-tall,
+    .slot-one.is-wide,
+    .slot-two,
+    .slot-two.is-wide,
     .slot-three,
-    .slot-three.is-tall {
+    .slot-three.is-wide,
+    .slot-four,
+    .slot-four.is-wide,
+    .slot-five,
+    .slot-five.is-wide {
       grid-column: 1 / -1;
-    }
-
-    .slot-two {
-      grid-column: 1 / 5;
-    }
-
-    .slot-four {
-      grid-column: 1 / 4;
-    }
-
-    .slot-five {
-      grid-column: 4 / -1;
-      margin-bottom: 0;
-      align-self: start;
-      margin-top: clamp(1.5rem, 6vw, 3rem);
+      margin-top: 0;
     }
   }
 </style>

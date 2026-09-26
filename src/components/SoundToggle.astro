@@ -52,8 +52,8 @@ const enabled = SITE.audio.trim().length > 0;
 <style>
   .sound {
     position: fixed;
-    right: clamp(1rem, 2.4vw, 2rem);
-    bottom: clamp(1rem, 2.4vw, 2rem);
+    right: clamp(1.25rem, 2.4vw, 2rem);
+    bottom: clamp(1.25rem, 2.4vw, 2rem);
     z-index: 70;
     display: flex;
     align-items: center;
@@ -65,7 +65,7 @@ const enabled = SITE.audio.trim().length > 0;
   .eye {
     position: relative;
     display: block;
-    width: clamp(2.75rem, 3.6vw, 3.4rem);
+    width: clamp(3.5rem, 4.4vw, 4.25rem);
     aspect-ratio: 1;
     border-radius: 50%;
     overflow: hidden;
@@ -79,7 +79,7 @@ const enabled = SITE.audio.trim().length > 0;
     object-fit: cover;
     /* 关着的时候退一步，开了才完全醒过来 */
     filter: saturate(0.5) brightness(0.92);
-    opacity: 0.72;
+    opacity: 0.82;
     transition: filter 700ms var(--ease), opacity 700ms var(--ease), transform 900ms var(--ease);
   }
 
@@ -98,7 +98,7 @@ const enabled = SITE.audio.trim().length > 0;
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 1px solid var(--line-strong);
+    border: 1.5px solid var(--line-strong);
     transition: border-color 600ms var(--ease);
   }
 
@@ -119,8 +119,9 @@ const enabled = SITE.audio.trim().length > 0;
 
   /* ---------- 标签：平时不出现 ---------- */
   .label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.18em;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     color: var(--text-muted);
     white-space: nowrap;
     opacity: 0;

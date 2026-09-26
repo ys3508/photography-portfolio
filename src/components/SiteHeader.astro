@@ -94,8 +94,9 @@ function isActive(href: string) {
 
   .brand {
     font-family: var(--font-serif);
-    font-size: clamp(1rem, 1.5vw, 1.1875rem);
-    letter-spacing: 0.16em;
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    font-weight: 500;
+    letter-spacing: 0.14em;
     white-space: nowrap;
   }
 
@@ -107,8 +108,9 @@ function isActive(href: string) {
 
   .nav-link {
     position: relative;
-    font-size: 0.8125rem;
-    letter-spacing: 0.16em;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
     padding-block: 0.4rem;
     transition: color 400ms var(--ease);
@@ -163,13 +165,56 @@ function isActive(href: string) {
     }
   }
 
-  @media (max-width: 420px) {
-    .nav {
-      gap: 0.9rem;
+  /*
+    窄屏：英文导航（Works / Selected / About）比中文长，加上语言与日夜两个按钮，
+    在 390px 上会把日夜按钮挤出屏幕。这里统一收一档，保证一行装得下。
+  */
+  @media (max-width: 560px) {
+    .bar {
+      gap: 0.5rem;
+      min-height: 3.75rem;
     }
+
+    .brand {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+    }
+
+    .nav {
+      gap: 0.6rem;
+    }
+
+    .nav-link {
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
+    }
+
+    .nav :global(.lang) {
+      min-width: 2rem;
+      height: 2rem;
+      padding-inline: 0.25rem;
+      font-size: 0.8125rem;
+    }
+
+    .nav :global(.theme-toggle) {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .brand {
+      font-size: 0.9375rem;
+      letter-spacing: 0.04em;
+    }
+
+    .nav {
+      gap: 0.45rem;
+    }
+
     .nav-link {
       font-size: 0.75rem;
-      letter-spacing: 0.1em;
     }
   }
 </style>

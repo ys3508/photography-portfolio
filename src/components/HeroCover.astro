@@ -33,7 +33,7 @@ const leadAlt = describe(lead, ui.leadAlt);
   <div class="shell grid above-ground">
     <div class="masthead">
       <h1 class="display name">{lang === 'en' ? SITE.photographerNameLatin : SITE.photographerName}</h1>
-      <p class="latin">{lang === 'en' ? SITE.photographerName : SITE.photographerNameLatin}</p>
+      <span class="latin">{lang === 'en' ? SITE.photographerName : SITE.photographerNameLatin}</span>
     </div>
 
     {
@@ -81,7 +81,7 @@ const leadAlt = describe(lead, ui.leadAlt);
     min-height: 100svh;
     display: flex;
     align-items: center;
-    padding-block: clamp(4.5rem, 9vh, 6.25rem) clamp(2.25rem, 5.5vh, 3.5rem);
+    padding-block: clamp(3.25rem, 6vh, 4.5rem) clamp(1.75rem, 4vh, 2.75rem);
     overflow: hidden;
   }
 
@@ -89,36 +89,43 @@ const leadAlt = describe(lead, ui.leadAlt);
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--gutter);
-    row-gap: clamp(0.5rem, 1.6vh, 1.25rem);
+    row-gap: clamp(0.5rem, 1.4vh, 1.1rem);
     width: 100%;
     align-items: end;
   }
 
   /* ---------- 刊头 ---------- */
+  /* 名字与另一种写法排在同一行 —— 省下的高度全给照片 */
   .masthead {
-    grid-column: 1 / 9;
+    grid-column: 1 / 10;
     grid-row: 1;
     z-index: 3;
     pointer-events: none;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 clamp(0.75rem, 1.6vw, 1.5rem);
   }
 
+  /* 字号收住 —— 和正文的差距不要太悬殊，照片才是主角 */
   .name {
     margin: 0;
-    font-size: clamp(2.35rem, 7.2vw, 6.25rem);
+    font-size: clamp(2.25rem, 4.3vw, 3.75rem);
     letter-spacing: 0.04em;
   }
 
   .latin {
-    margin: 0.9rem 0 0;
-    font-size: 0.8125rem;
-    letter-spacing: 0.4em;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--text-muted);
+    white-space: nowrap;
   }
 
-  /* ---------- 代表作品 ---------- */
+  /* ---------- 代表作品：首页的 intro，给它最大的位置 ---------- */
   .plate {
-    grid-column: 5 / 13;
+    grid-column: 2 / 13;
     grid-row: 2;
     margin: 0;
     display: flex;
@@ -126,7 +133,7 @@ const leadAlt = describe(lead, ui.leadAlt);
   }
 
   .plate .frame {
-    height: clamp(12rem, 35svh, 26rem);
+    height: clamp(17rem, 58svh, 40rem);
     width: auto;
     max-width: 100%;
     border: 0;
@@ -138,22 +145,20 @@ const leadAlt = describe(lead, ui.leadAlt);
   .tagline {
     grid-column: 1 / 9;
     grid-row: 3;
-    margin: clamp(1.5rem, 3.5vh, 2.5rem) 0 0;
-  }
-
-  .tagline .seal-mark {
-    font-size: clamp(3rem, 5.2vw, 4.75rem);
+    margin: clamp(1rem, 2.2vh, 1.6rem) 0 0;
+    gap: clamp(0.5rem, 0.9vw, 0.75rem);
   }
 
   .creed {
     display: grid;
-    gap: 0.4rem;
-    margin-top: clamp(0.5rem, 1vw, 0.8rem);
+    gap: 0.35rem;
+    margin-top: clamp(0.4rem, 0.8vw, 0.65rem);
   }
 
   .creed-zh {
     font-family: var(--font-serif);
-    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+    font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+    font-weight: 500;
     line-height: 1.5;
     letter-spacing: 0.06em;
     color: var(--text);
@@ -161,9 +166,9 @@ const leadAlt = describe(lead, ui.leadAlt);
 
   .creed-en {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 300;
-    letter-spacing: 0.14em;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
     color: var(--text-muted);
   }
 
@@ -171,9 +176,9 @@ const leadAlt = describe(lead, ui.leadAlt);
   .scroll-cue {
     position: absolute;
     left: 50%;
-    bottom: 1.5rem;
+    bottom: 1.25rem;
     width: 1px;
-    height: 3rem;
+    height: 2.5rem;
     background: var(--line);
     overflow: hidden;
   }
@@ -196,8 +201,7 @@ const leadAlt = describe(lead, ui.leadAlt);
     }
   }
 
-  /* 矮屏幕：不再强求一屏收满 */
-  @media (max-height: 660px) {
+  @media (max-height: 700px) {
     .cover {
       min-height: auto;
     }
@@ -207,7 +211,7 @@ const leadAlt = describe(lead, ui.leadAlt);
   @media (max-width: 860px) {
     .cover {
       min-height: auto;
-      padding-block: clamp(3.5rem, 11vh, 5.5rem) clamp(2.5rem, 7vh, 3.5rem);
+      padding-block: clamp(3rem, 10vh, 5rem) clamp(2.5rem, 7vh, 3.5rem);
     }
 
     .grid {
@@ -232,11 +236,7 @@ const leadAlt = describe(lead, ui.leadAlt);
 
     .tagline {
       grid-column: 1 / -1;
-      margin-top: clamp(1.75rem, 7vw, 2.75rem);
-    }
-
-    .creed-zh {
-      font-size: 1.125rem;
+      margin-top: clamp(1.5rem, 6vw, 2.25rem);
     }
 
     .scroll-cue {
