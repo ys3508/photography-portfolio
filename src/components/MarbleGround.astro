@@ -11,7 +11,7 @@
 import { withBase } from '../lib/paths';
 
 interface Props {
-  /** hero = 从左缘切出去的大头像；statement = 居中、更淡，衬在「思」后面 */
+  /** hero = 从左缘切出去的大头像；statement = 居中、更淡，衬在「观」后面 */
   variant?: 'hero' | 'statement';
 }
 const { variant = 'hero' } = Astro.props;
@@ -37,7 +37,7 @@ const loading = variant === 'hero' ? 'eager' : 'lazy';
     --marble-focus: 42% 52%;
   }
 
-  /* ---------- 摄影陈述：居中，更淡，让朱红的「思」正好落在石膏像上 ---------- */
+  /* ---------- 摄影陈述：居中，更淡，让朱红的「观」正好落在石膏像上 ---------- */
   .is-statement img {
     left: 50%;
     top: 50%;

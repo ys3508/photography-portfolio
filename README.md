@@ -1,6 +1,6 @@
 # 王宇 摄影作品集
 
-**思 · Think and feel the world**
+**观 · Think and feel the world**
 
 摄影师 **王宇（Yu Wang）** 的个人摄影网站 —— 个人摄影画册 × 线上摄影展 × 摄影师个人档案。
 不是商业接单网站，没有预约、没有商城、没有评论。照片是唯一的主角。
@@ -195,9 +195,9 @@ export const SITE = {
   photographerName: '王宇',              // 导航品牌名 + 首页刊头 + 网页标题
   photographerNameLatin: 'Yu Wang',      // 拼音 / 英文名
 
-  motto: '思',                           // 摄影理念那一个字
+  motto: '观',                           // 摄影理念那一个字
   mottoLatin: 'Think and feel the world',
-  creed: '观看，是为了看见自己',           // 封面「思」下面那一句
+  creed: '观看，是为了看见自己',           // 封面「观」下面那一句
   creedLatin: 'To observe is to encounter oneself.',
 
   email: '',                             // 留空则页脚不显示联系方式
@@ -264,7 +264,7 @@ export const STATEMENT = {
 
 **朱红**：同样在 `global.css` 顶部，`--accent`。
 白天 `#480818`，夜晚 `#ca4954`（夜晚必须提亮，原色在黑底上看不见）。
-改一处，全站的「思」、细线、下划线、选中底色、焦点环会一起变。
+改一处，全站的「观」、细线、下划线、选中底色、焦点环会一起变。
 
 **换摄影师人像**：把照片存成 `public/photos/portrait/portrait.jpg`（建议竖构图，4:5 左右）。
 **换分享预览图**：把一张代表作存成 `public/photos/share/og-cover.jpg`（建议 1200×630）。

@@ -14,19 +14,19 @@ export const SITE = {
    * motto 是那一个字，mottoLatin 是它的英文。
    * 两者成对出现，像一方印章 —— 首页、摄影陈述、关于页都用它。
    */
-  motto: '思',
+  motto: '观',
   mottoLatin: 'Think and feel the world',
 
-  /** 封面「思」下面那一句 */
+  /** 封面「观」下面那一句 */
   creed: '观看，是为了看见自己',
   creedLatin: 'To observe is to encounter oneself.',
   /** 联系方式，留空则页脚不显示 */
   email: '',
 
   /** 网站描述，用于 SEO 与微信/短信分享预览 */
-  description: '王宇（Yu Wang）个人摄影作品集 —— 思 · Think and feel the world。观看，是为了看见自己。',
+  description: '王宇（Yu Wang）个人摄影作品集 —— 观 · Think and feel the world。观看，是为了看见自己。',
   descriptionEn:
-    'Photographs by Yu Wang — 思 · Think and feel the world. To observe is to encounter oneself.',
+    'Photographs by Yu Wang — 观 · Think and feel the world. To observe is to encounter oneself.',
   /** 分享预览图（相对 public/ 的路径），建议用一张代表作 */
   ogImage: 'photos/share/og-cover.jpg',
   /** 摄影师人像（相对 public/ 的路径） */
