@@ -15,12 +15,14 @@ interface Props {
   variant?: 'hero' | 'statement';
 }
 const { variant = 'hero' } = Astro.props;
+// 封面的底纹在首屏，必须立刻加载，否则会晚一拍才浮出来
+const loading = variant === 'hero' ? 'eager' : 'lazy';
 ---
 
 <div class:list={['marble-ground', `is-${variant}`]} aria-hidden="true">
   <picture>
     <source type="image/avif" srcset={withBase('texture/marble-head.avif')} />
-    <img src={withBase('texture/marble-head.webp')} alt="" loading="lazy" decoding="async" />
+    <img src={withBase('texture/marble-head.webp')} alt="" loading={loading} decoding="async" />
   </picture>
 </div>
 
