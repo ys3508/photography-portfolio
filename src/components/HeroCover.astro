@@ -12,11 +12,11 @@
  */
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
-import { photos, featuredPhotos } from '../lib/gallery';
+import { photos, heroPhotos } from '../lib/gallery';
 import MarbleGround from './MarbleGround.astro';
 
-const lead = featuredPhotos[0] ?? photos[0];
-const second = featuredPhotos[1] ?? photos[1];
+const lead = heroPhotos[0] ?? photos[0];
+const second = heroPhotos[1] ?? photos[1];
 const total = photos.length;
 
 function describe(photo: (typeof photos)[number] | undefined, fallback: string) {

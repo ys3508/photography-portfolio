@@ -1,5 +1,5 @@
 import galleryData from '../data/gallery.json';
-import { FEATURED_LIMIT } from '../config/site';
+import { FEATURED_LIMIT, HERO_PHOTO_COUNT } from '../config/site';
 
 export interface Photo {
   id: string;
@@ -27,6 +27,12 @@ export const photos: Photo[] = [...(galleryData as Photo[])].sort(
 export const featuredPhotos: Photo[] = photos
   .filter((p) => p.featured)
   .slice(0, FEATURED_LIMIT);
+
+/** 封面用的（代表作品 + 右上角那张小的） */
+export const heroPhotos: Photo[] = featuredPhotos.slice(0, HERO_PHOTO_COUNT);
+
+/** 「精品集」那一节用的 —— 刻意跳过封面已经用掉的，首页不重复同一张 */
+export const editorialPhotos: Photo[] = featuredPhotos.slice(HERO_PHOTO_COUNT, HERO_PHOTO_COUNT + 5);
 
 /** 真正的照片墙用：每张照片在完整作品集中的序号，Lightbox 计数 "12 / 47" 用得到 */
 export function indexOf(photo: Photo): number {

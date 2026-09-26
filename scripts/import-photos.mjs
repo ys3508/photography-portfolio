@@ -36,11 +36,21 @@ const execFileAsync = promisify(execFile);
 
 const PROJECT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 
-const DEFAULT_SOURCE = path.join(
+const ICLOUD_BASE = path.join(
   os.homedir(),
-  'Library/Mobile Documents/com~apple~CloudDocs/叔叔摄影作品集/精品集',
+  'Library/Mobile Documents/com~apple~CloudDocs/叔叔摄影作品集',
 );
 
+/*
+  网站读取哪个文件夹。
+  目前是「网站照片」—— 王宇挑定、确认要放上网站的那一组。
+  「精品集」留作他平时挑选的中转站；如果以后决定直接用「精品集」，
+  把下面这一行改成 '精品集' 即可（同时记得改 iCloud 里的 说明书.txt）。
+*/
+const SOURCE_FOLDER = '网站照片';
+const OTHER_FOLDER = '精品集';
+
+const DEFAULT_SOURCE = path.join(ICLOUD_BASE, SOURCE_FOLDER);
 const SOURCE_DIR = process.env.PHOTOS_SOURCE_DIR?.trim() || DEFAULT_SOURCE;
 
 const OUT_FULL = path.join(PROJECT, 'public/photos/full');
@@ -48,11 +58,16 @@ const OUT_THUMB = path.join(PROJECT, 'public/photos/thumbs');
 const GALLERY_JSON = path.join(PROJECT, 'src/data/gallery.json');
 const META_JSON = path.join(PROJECT, 'content/photo-meta.json');
 
-const FULL_EDGE = 2200; // 全屏浏览用
-const THUMB_EDGE = 900; // 照片墙用
-const FULL_QUALITY = 88;
-const THUMB_QUALITY = 82;
-const AVIF_QUALITY = 58;
+/*
+  只缩小、永不放大（sharp 的 withoutEnlargement）。
+  原图如果本来就小于这些尺寸，就原样保留 —— 不会为了"统一"去插值放大，
+  也不会把一张 768×1024 的照片缩成 675×900。
+*/
+const FULL_EDGE = 2400; // 全屏浏览用
+const THUMB_EDGE = 1200; // 照片墙用（留足 2 倍屏的余量）
+const FULL_QUALITY = 94;
+const THUMB_QUALITY = 88;
+const AVIF_QUALITY = 68;
 
 const SUPPORTED = new Set([
   '.jpg', '.jpeg', '.png', '.tif', '.tiff', '.webp', '.heic', '.heif',
@@ -126,6 +141,22 @@ async function main() {
   log('────────────────────────────────────────');
   log(`来源（只读）: ${SOURCE_DIR}`);
   log(`输出        : public/photos/\n`);
+
+  // 另一个文件夹里如果也有照片，提醒一声，免得有人以为它们会自动上网站
+  if (!process.env.PHOTOS_SOURCE_DIR) {
+    const other = path.join(ICLOUD_BASE, OTHER_FOLDER);
+    try {
+      const n = (await fs.readdir(other))
+        .filter((f) => !f.startsWith('.') && SUPPORTED.has(path.extname(f).toLowerCase()))
+        .length;
+      if (n > 0) {
+        log(`⚠  提醒：「${OTHER_FOLDER}」里还有 ${n} 张照片，本次不会用到。`);
+        log(`   网站只读取「${SOURCE_FOLDER}」。要换文件夹请改 scripts/import-photos.mjs 顶部的 SOURCE_FOLDER。\n`);
+      }
+    } catch {
+      /* 另一个文件夹不存在也无所谓 */
+    }
+  }
 
   if (path.resolve(SOURCE_DIR).startsWith(path.resolve(PROJECT) + path.sep)) {
     console.error('✗ 来源目录不能在项目内部，退出。');

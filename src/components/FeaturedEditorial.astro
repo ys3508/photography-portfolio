@@ -4,10 +4,16 @@
  * 节奏：超大横图 → 竖图 + 留白 → 宽幅 → 两张互相对话的小图。
  * 完整的 masonry 照片墙在 /gallery 页面。
  */
-import { featuredPhotos, indexOf } from '../lib/gallery';
+import { editorialPhotos, indexOf } from '../lib/gallery';
 import PhotoFrame from './PhotoFrame.astro';
 
-const [one, two, three, four, five] = featuredPhotos;
+const [one, two, three, four, five] = editorialPhotos;
+
+/**
+ * 版位不能假设照片是横是竖 —— 王宇挑哪几张是他的事，
+ * 排版要能接住任何比例。横图铺得宽，竖图自动收窄，不然一张竖图满幅会高得离谱。
+ */
+const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.height >= 1.15;
 ---
 
 <section class="featured section" id="featured" aria-labelledby="featured-title">
@@ -15,14 +21,14 @@ const [one, two, three, four, five] = featuredPhotos;
     <header class="section-head">
       <h2 class="section-title reveal" id="featured-title">精品集</h2>
       <p class="meta reveal" style="--reveal-delay: 100ms">
-        由摄影师本人挑选 · {featuredPhotos.length} 张
+        由摄影师本人挑选 · {editorialPhotos.length} 张
       </p>
     </header>
 
     <div class="spread">
       {
         one && (
-          <div class="slot slot-one reveal clip-reveal">
+          <div class:list={['slot', 'slot-one', 'reveal', 'clip-reveal', !isWide(one) && 'is-tall']}>
             <PhotoFrame
               photo={one}
               index={indexOf(one)}
@@ -45,7 +51,7 @@ const [one, two, three, four, five] = featuredPhotos;
 
       {
         three && (
-          <div class="slot slot-three reveal clip-reveal">
+          <div class:list={['slot', 'slot-three', 'reveal', 'clip-reveal', !isWide(three) && 'is-tall']}>
             <PhotoFrame
               photo={three}
               index={indexOf(three)}
@@ -89,9 +95,14 @@ const [one, two, three, four, five] = featuredPhotos;
     align-items: end;
   }
 
-  /* 01 超大横图，略微右偏，留出左侧空白 */
+  /* 01 主图，略微右偏，留出左侧空白 */
   .slot-one {
     grid-column: 3 / 13;
+  }
+
+  /* 竖构图时收窄，否则满幅的竖图会高得吓人 */
+  .slot-one.is-tall {
+    grid-column: 5 / 12;
   }
 
   /* 02 较小的竖图，靠左；右侧是呼吸空间与一句说明 */
@@ -99,9 +110,13 @@ const [one, two, three, four, five] = featuredPhotos;
     grid-column: 2 / 6;
   }
 
-  /* 03 宽幅，几乎满幅 */
+  /* 03 宽幅，几乎满幅；若是竖构图则居中收窄 */
   .slot-three {
     grid-column: 1 / 13;
+  }
+
+  .slot-three.is-tall {
+    grid-column: 4 / 11;
   }
 
   /* 04 / 05 两张互相对话的小作品：一高一低 */
@@ -121,7 +136,9 @@ const [one, two, three, four, five] = featuredPhotos;
     }
 
     .slot-one,
-    .slot-three {
+    .slot-one.is-tall,
+    .slot-three,
+    .slot-three.is-tall {
       grid-column: 1 / -1;
     }
 

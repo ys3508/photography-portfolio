@@ -58,5 +58,10 @@ export const NAV = [
   { label: '关于', href: 'about' },
 ] as const;
 
-/** 首页「精品集」editorial 版块最多展示几张 */
-export const FEATURED_LIMIT = 5;
+/**
+ * 首页一共用掉几张「精品」。
+ * 其中前 HERO_PHOTO_COUNT 张给封面，剩下的给「精品集」那一节 ——
+ * 同一张照片不会在首页出现两次。
+ */
+export const FEATURED_LIMIT = 7;
+export const HERO_PHOTO_COUNT = 2;

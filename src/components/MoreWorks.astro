@@ -5,6 +5,7 @@ import { withBase } from '../lib/paths';
 import PhotoFrame from './PhotoFrame.astro';
 
 const featuredIds = new Set(featuredPhotos.map((p) => p.id));
+// 只放还没在首页出现过的作品；不足两张就不摆这条预览带，一张孤零零的很难看
 const strip = photos.filter((p) => !featuredIds.has(p.id)).slice(0, 4);
 const total = photos.length;
 ---
@@ -17,7 +18,7 @@ const total = photos.length;
     </header>
 
     {
-      strip.length > 0 && (
+      strip.length >= 2 && (
         <div class="strip">
           {strip.map((photo, i) => (
             <div class="strip-item reveal clip-reveal" style={`--reveal-delay: ${i * 90}ms`}>

@@ -84,14 +84,19 @@ iCloud 云盘 / 叔叔摄影作品集 /
 └── 说明书.txt  ← 给叔叔看的上传步骤
 ```
 
-**网站只读取「精品集」。** 哪些照片算精品，由叔叔本人决定，
-程序不会替他挑、也不会用 AI 自动选片。
+**网站目前只读取「网站照片」这个文件夹** —— 王宇挑定、确认要正式放上网站的那一组。
+「精品集」留作他平时挑选的中转站，网站不会自动去读它。
+哪些照片上网站，由王宇本人决定，程序不会替他挑、也不会用 AI 自动选片。
 
 本机上的实际路径：
 
 ```
-/Users/sissi/Library/Mobile Documents/com~apple~CloudDocs/叔叔摄影作品集/精品集
+/Users/sissi/Library/Mobile Documents/com~apple~CloudDocs/叔叔摄影作品集/网站照片
 ```
+
+> **要换成读「精品集」**：改 `scripts/import-photos.mjs` 顶部的 `SOURCE_FOLDER`，
+> 同时把 iCloud 里的 `说明书.txt` 一起改，免得两边说法不一致。
+> 导入时如果另一个文件夹里有照片，脚本会提醒你一声。
 
 桌面上有一个同名快捷方式指向它。
 
@@ -110,8 +115,8 @@ npm run import:photos
 ```
 iCloud 精品集（原图，只读）
      ↓ 读取
-public/photos/full/*.webp     网站大图   长边约 2200px
-public/photos/thumbs/*.webp   缩略图     长边约 900px
+public/photos/full/*.webp     网站大图   长边最多 2400px（原图更小就原样保留）
+public/photos/thumbs/*.webp   缩略图     长边最多 1200px（同上）
 public/photos/thumbs/*.avif   缩略图     体积更小，现代浏览器优先用
      ↓
 src/data/gallery.json         网站读取的照片数据（自动生成，不用手改）
@@ -341,8 +346,8 @@ A：不会。导入脚本只有读取操作，全文没有任何删除 / 移动 
    高清原始文件也被 `.gitignore` 挡住，不会被传到 GitHub。
 
 **Q：照片很多会不会很慢？**
-A：所有照片都是 lazy load，照片墙先加载缩略图（长边 900px），
-   只有点开全屏时才加载大图（长边 2200px）。几百张也没问题。
+A：所有照片都是 lazy load，照片墙先加载缩略图，只有点开全屏时才加载大图。几百张也没问题。
+   **脚本只缩小、永不放大**：原图本来就小于上限时，网站版本保持原分辨率，不做任何插值。
 
 **Q：为什么用 WebP / AVIF？**
 A：同样画质下体积小很多。iPhone Safari（14 以上）、Chrome、Edge、Firefox 全都支持。
