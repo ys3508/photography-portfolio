@@ -1,0 +1,136 @@
+---
+import { SITE, NAV } from '../config/site';
+import { withBase } from '../lib/paths';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+
+const current = Astro.url.pathname.replace(/\/+$/, '');
+function isActive(href: string) {
+  if (href.startsWith('#')) return false;
+  return current.endsWith(`/${href}`);
+}
+---
+
+<header class:list={['site-header', overlay && 'is-overlay']} data-site-header>
+  <div class="bar shell">
+    <a class="brand" href={withBase('')}>{SITE.photographerName}</a>
+
+    <nav class="nav" aria-label="主导航">
+      {
+        NAV.map((item) => (
+          <a
+            class:list={['nav-link', isActive(item.href) && 'is-active']}
+            href={item.href.startsWith('#') ? withBase('') + item.href : withBase(item.href)}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--theme-duration) var(--ease),
+      border-color 500ms var(--ease),
+      color var(--theme-duration) var(--ease);
+  }
+
+  /* 首页：起始完全透明，滚动之后才浮现，不遮挡封面 */
+  .site-header.is-overlay {
+    position: fixed;
+    inset-inline: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .site-header.is-overlay.is-stuck {
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom-color: var(--line);
+  }
+
+  .site-header:not(.is-overlay).is-stuck {
+    border-bottom-color: var(--line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4.25rem;
+  }
+
+  .brand {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.5vw, 1.1875rem);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.4vw, 2.25rem);
+  }
+
+  .nav-link {
+    position: relative;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+    padding-block: 0.4rem;
+    transition: color 400ms var(--ease);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0.15rem;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 450ms var(--ease);
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: var(--text);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 420px) {
+    .nav {
+      gap: 0.9rem;
+    }
+    .nav-link {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+  }
+</style>

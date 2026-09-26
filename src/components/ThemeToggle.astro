@@ -1,0 +1,33 @@
+---
+/** 日 / 夜手动切换。状态与图标由 src/scripts/theme.ts 更新。 */
+---
+
+<button
+  class="theme-toggle"
+  data-theme-toggle
+  type="button"
+  aria-label="切换白天 / 夜晚模式"
+  title="切换白天 / 夜晚模式"
+>
+  <span data-theme-icon aria-hidden="true">☀︎</span>
+</button>
+
+<style>
+  .theme-toggle {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: inherit;
+    transition: background-color 400ms var(--ease), opacity 400ms var(--ease);
+    opacity: 0.75;
+  }
+
+  .theme-toggle:hover {
+    opacity: 1;
+    background: var(--photo-rest);
+  }
+</style>
