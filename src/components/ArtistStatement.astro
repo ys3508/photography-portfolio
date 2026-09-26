@@ -1,30 +1,38 @@
 ---
+/**
+ * 摄影陈述。
+ *
+ * 首页封面已经有「思 / Think and feel the world」那方印了，
+ * 所以这一节只在王宇本人写了陈述文字之后才出现 —— 而且不再重复那个字，
+ * 免得同一屏里说两遍同一句话。
+ */
 import { SITE } from '../config/site';
 import MarbleGround from './MarbleGround.astro';
+
+const hasStatement = SITE.statement.trim().length > 0;
 ---
 
-<section class="statement section" aria-labelledby="statement-title">
-  <MarbleGround variant="statement" />
+{
+  hasStatement && (
+    <section class="statement section" aria-labelledby="statement-title">
+      <MarbleGround variant="statement" />
 
-  <div class="shell inner above-ground">
-    <p class="eyebrow reveal" id="statement-title">Artist Statement · 摄影陈述</p>
+      <div class="shell inner above-ground">
+        <p class="eyebrow reveal" id="statement-title">
+          摄影陈述
+        </p>
 
-    <figure class="seal seal-lg seal-center reveal" style="--reveal-delay: 120ms">
-      <span class="seal-mark">{SITE.motto}</span>
-      <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
-    </figure>
-
-    {
-      SITE.statement && (
-        <blockquote class="text reveal" style="--reveal-delay: 240ms">
+        <blockquote class="text reveal" style="--reveal-delay: 140ms">
           {SITE.statement}
         </blockquote>
-      )
-    }
 
-    <p class="sign reveal" style="--reveal-delay: 320ms">— {SITE.photographerName}</p>
-  </div>
-</section>
+        <p class="sign reveal" style="--reveal-delay: 240ms">
+          — {SITE.photographerName}
+        </p>
+      </div>
+    </section>
+  )
+}
 
 <style>
   .statement {
@@ -35,10 +43,9 @@ import MarbleGround from './MarbleGround.astro';
 
   .inner {
     display: grid;
-    justify-items: center;
-    gap: clamp(2.5rem, 6vw, 4.5rem);
-    max-width: 52rem;
-    text-align: center;
+    justify-items: start;
+    gap: clamp(2rem, 4.5vw, 3.5rem);
+    max-width: 46rem;
   }
 
   .text {
@@ -47,7 +54,6 @@ import MarbleGround from './MarbleGround.astro';
     font-size: clamp(1.25rem, 2.5vw, 1.875rem);
     line-height: 1.9;
     font-weight: 300;
-    max-width: 30em;
   }
 
   .sign {

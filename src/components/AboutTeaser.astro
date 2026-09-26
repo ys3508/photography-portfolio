@@ -40,16 +40,31 @@ import { withBase } from '../lib/paths';
     border-top: 1px solid var(--line);
   }
 
+  /*
+    文字在左、人像在右。
+    右侧是朱染的深色区，照片是不透明的所以不受影响，
+    而正文留在干净的左半边，永远读得清。
+  */
   .inner {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: clamp(2rem, 6vw, 5rem);
     align-items: center;
   }
 
   .portrait {
+    order: 2;
+    justify-self: end;
+  }
+
+  .text {
+    order: 1;
+  }
+
+  .portrait {
     margin: 0;
     max-width: 26rem;
+    width: 100%;
   }
 
   .portrait-frame {
@@ -82,7 +97,9 @@ import { withBase } from '../lib/paths';
       grid-template-columns: 1fr;
     }
     .portrait {
+      order: 2;
       max-width: 18rem;
+      justify-self: start;
     }
   }
 </style>

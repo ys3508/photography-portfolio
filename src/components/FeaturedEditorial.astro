@@ -42,16 +42,6 @@ const [one, two, three, four, five] = featuredPhotos;
         )
       }
 
-      {
-        two && (
-          <p class="aside reveal" style="--reveal-delay: 160ms">
-            <span class="eyebrow">精品集</span>
-            <span class="aside-text">
-              这里的每一张，都是摄影师本人从自己的作品集中挑出来、认为应该正式展出的照片。
-            </span>
-          </p>
-        )
-      }
 
       {
         three && (
@@ -109,22 +99,6 @@ const [one, two, three, four, five] = featuredPhotos;
     grid-column: 2 / 6;
   }
 
-  .aside {
-    grid-column: 8 / 12;
-    align-self: end;
-    display: grid;
-    gap: 0.9rem;
-    margin: 0 0 1rem;
-  }
-
-  .aside-text {
-    font-family: var(--font-serif);
-    font-size: clamp(1rem, 1.5vw, 1.25rem);
-    line-height: 1.75;
-    color: var(--text-muted);
-    max-width: 22em;
-  }
-
   /* 03 宽幅，几乎满幅 */
   .slot-three {
     grid-column: 1 / 13;
@@ -153,15 +127,6 @@ const [one, two, three, four, five] = featuredPhotos;
 
     .slot-two {
       grid-column: 1 / 5;
-    }
-
-    .aside {
-      grid-column: 1 / -1;
-      margin-bottom: 0;
-    }
-
-    .aside-text {
-      max-width: none;
     }
 
     .slot-four {

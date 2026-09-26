@@ -232,7 +232,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
   }
 
   .tagline .seal-mark {
-    font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+    font-size: clamp(3rem, 5.2vw, 4.75rem);
   }
 
   .ledger {
@@ -322,7 +322,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     }
 
     .plate-portrait {
-      grid-column: 1 / 4;
+      grid-column: 1 / 5;
       grid-row: 3;
       margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
       align-self: start;
@@ -333,16 +333,16 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       width: 100%;
     }
 
+    /* 「思」单独占一行、贴左，英文才不会伸进右侧的朱染里 */
     .tagline {
-      grid-column: 4 / -1;
-      grid-row: 3;
-      align-self: end;
-      margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
+      grid-column: 1 / -1;
+      grid-row: 4;
+      margin: clamp(1.75rem, 7vw, 2.75rem) 0 0;
     }
 
     .ledger {
       grid-column: 1 / -1;
-      grid-row: 4;
+      grid-row: 5;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;

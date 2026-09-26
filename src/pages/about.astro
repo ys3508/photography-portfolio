@@ -57,11 +57,21 @@ import MarbleGround from '../components/MarbleGround.astro';
     overflow: hidden;
   }
 
+  /* 正文在左（干净的一侧），人像在右（朱染的深色一侧，照片不透明不受影响） */
   .about-grid {
     display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+    grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
     gap: clamp(2rem, 6vw, 5rem);
     align-items: start;
+  }
+
+  .portrait {
+    order: 2;
+    justify-self: end;
+  }
+
+  .prose {
+    order: 1;
   }
 
   .portrait {
@@ -103,7 +113,9 @@ import MarbleGround from '../components/MarbleGround.astro';
       grid-template-columns: 1fr;
     }
     .portrait {
+      order: 2;
       max-width: 20rem;
+      justify-self: start;
     }
   }
 </style>

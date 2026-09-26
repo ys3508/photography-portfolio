@@ -11,12 +11,13 @@
 :root {
   --bg: #f4f2ec;
   --bg-recessed: #edeae2;
-  --text: #171717;
-  --text-muted: #6f6a62;
-  --text-faint: #9b958c;
-  --line: rgba(23, 23, 23, 0.14);
-  --line-strong: rgba(23, 23, 23, 0.28);
-  --photo-rest: rgba(23, 23, 23, 0.05);
+  /* 文字不用中性黑 —— 全部带一点朱的底子，和朱染是同一家人 */
+  --text: #241417;
+  --text-muted: #6d565a;
+  --text-faint: #9d8b8d;
+  --line: rgba(36, 20, 23, 0.14);
+  --line-strong: rgba(36, 20, 23, 0.3);
+  --photo-rest: rgba(36, 20, 23, 0.05);
   --overlay: #0b0b0b;
   --overlay-text: #eeece7;
 
@@ -48,16 +49,20 @@
   */
   --wash: linear-gradient(
     to right,
+    /* 左 30%：暖白 → 暖灰褐 */
     #f4f2ec 0%,
-    #f4f2ec 50%,
-    #efe7de 62%,
-    #d3b8a6 72%,
-    #9e6a5b 80%,
-    #7c393e 86%,
-    #63212f 91%,
-    #531426 96%,
+    #f2ece4 18%,
+    #e9ddd0 30%,
+    /* 右 70%：陶土 → 砖红 → 深酒红 */
+    #ddc0aa 42%,
+    #c99d87 54%,
+    #b1756a 65%,
+    #94524f 75%,
+    #77343b 84%,
+    #601f2e 92%,
+    #521325 97%,
     #480818 100%
-  ); --font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC',
+  );--font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC',
     'STSong', serif;
   --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui,
     -apple-system, sans-serif;
@@ -77,12 +82,13 @@
 :root[data-theme='night'] {
   --bg: #111111;
   --bg-recessed: #0b0b0b;
-  --text: #eeece7;
-  --text-muted: #948e86;
-  --text-faint: #6b665f;
-  --line: rgba(238, 236, 231, 0.16);
-  --line-strong: rgba(238, 236, 231, 0.32);
-  --photo-rest: rgba(238, 236, 231, 0.05);
+  /* 夜间的象牙也偏暖，和朱染呼应 */
+  --text: #efe8e4;
+  --text-muted: #9a8b88;
+  --text-faint: #6d615f;
+  --line: rgba(239, 232, 228, 0.16);
+  --line-strong: rgba(239, 232, 228, 0.34);
+  --photo-rest: rgba(239, 232, 228, 0.05);
 
   --accent: #ca4954;
   --accent-line: rgba(202, 73, 84, 0.6);
@@ -96,14 +102,17 @@
   --wash: linear-gradient(
     to right,
     #111111 0%,
-    #111111 44%,
-    #19100f 58%,
-    #2a1512 70%,
-    #47191d 80%,
-    #672029 88%,
-    #86253a 95%,
-    #9a2b43 100%
-  ); color-scheme: dark;
+    #141112 18%,
+    #1d1414 30%,
+    #2e1a18 42%,
+    #44201f 54%,
+    #5b2126 65%,
+    #71202e 75%,
+    #842336 84%,
+    #922740 92%,
+    #9a2a45 97%,
+    #a02d49 100%
+  );color-scheme: dark;
 }
 
 /* --------------------------------------------------------------------------
@@ -461,15 +470,15 @@ h3 {
   font-weight: 300;
   line-height: 1;
   letter-spacing: 0.06em;
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-size: clamp(3.25rem, 6.4vw, 5.75rem);
   color: var(--accent);
 }
 
 .seal-latin {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 300;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--text-muted);
   line-height: 1.6;
@@ -484,7 +493,7 @@ h3 {
 }
 
 .seal-lg .seal-mark {
-  font-size: clamp(3.75rem, 9vw, 8rem);
+  font-size: clamp(4.5rem, 10.5vw, 9.5rem);
 }
 
 .seal-center {
@@ -551,7 +560,8 @@ h3 {
    像印在红色书口上的页码。
    -------------------------------------------------------------------------- */
 .on-wash,
-.on-wash a,
+/* 后代也要覆盖 —— .meta 之类的类自己带颜色，光靠继承盖不住 */
+.on-wash *,
 /* 章节标题右侧的说明文字永远贴着右缘，所以永远落在深色上 */
 .section-head > .meta,
 /* 页脚右侧的导航同理 */
@@ -572,14 +582,17 @@ h3 {
    -------------------------------------------------------------------------- */
 @media (max-width: 860px) {
   :root {
+    /* 手机是竖的，正文占满宽度，所以朱染收在右侧四分之一。
+       颜色序列和宽屏一致：陶土 → 砖红 → 深酒红，只是压缩。 */
     --wash: linear-gradient(
       to right,
       #f4f2ec 0%,
-      #f4f2ec 80%,
-      #e8d6c8 88%,
-      #b7736a 94%,
-      #7a2c39 98%,
-      #5d1526 100%
+      #f2ece4 58%,
+      #e7d3c0 72%,
+      #cf9e88 82%,
+      #a85b53 90%,
+      #7a2c39 96%,
+      #521325 100%
     );
   }
 
@@ -587,23 +600,35 @@ h3 {
     --wash: linear-gradient(
       to right,
       #111111 0%,
-      #111111 78%,
-      #2a1418 87%,
-      #5a1a28 94%,
-      #832338 98%,
-      #932840 100%
+      #141112 58%,
+      #241717 72%,
+      #452020 82%,
+      #6b2130 90%,
+      #892438 96%,
+      #9a2a45 100%
     );
   }
 
-  .on-wash,
-  .on-wash a,
-  .section-head > .meta,
+  /*
+    窄屏上只有「右对齐」的元素才真的落在深色上，所以象牙色也只给它们。
+    左对齐的东西（页脚的名字、页脚导航、印下面的英文）仍在干净的一侧，保持常规颜色。
+  */
   .site-footer .links a {
     color: var(--text-muted);
   }
 
-  .on-wash a:hover,
   .site-footer .links a:hover {
     color: var(--text);
+  }
+
+  /* 首页底部那一行「精品集 ／ 共 14 张」在手机上是左右分开的两端，
+     只有右边那个在红上 */
+  .ledger.on-wash > :first-child {
+    color: var(--text-muted);
+  }
+
+  /* 印下面的英文左对齐，收窄让它在干净的一侧折行，不要伸进红里 */
+  .seal-latin {
+    max-width: 13em;
   }
 }
