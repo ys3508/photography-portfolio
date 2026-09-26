@@ -4,7 +4,7 @@
  * 节奏：超大横图 → 竖图 + 留白 → 宽幅 → 两张互相对话的小图。
  * 完整的 masonry 照片墙在 /gallery 页面。
  */
-import { editorialPhotos, indexOf } from '../lib/gallery';
+import { editorialPhotos, featuredPhotos, indexOf } from '../lib/gallery';
 import PhotoFrame from './PhotoFrame.astro';
 import { getLang, t } from '../lib/i18n';
 
@@ -31,7 +31,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
           <div class:list={['slot', 'slot-one', 'reveal', 'clip-reveal', isWide(one) && 'is-wide']}>
             <PhotoFrame
               photo={one}
-              index={indexOf(one)}
+              index={indexOf(one, featuredPhotos)}
               useFull
               eager
               sizes="(max-width: 860px) 100vw, 82vw"
@@ -43,7 +43,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
       {
         two && (
           <div class:list={['slot', 'slot-two', 'reveal', 'clip-reveal', isWide(two) && 'is-wide']}>
-            <PhotoFrame photo={two} index={indexOf(two)} sizes="(max-width: 860px) 70vw, 34vw" />
+            <PhotoFrame photo={two} index={indexOf(two, featuredPhotos)} sizes="(max-width: 860px) 70vw, 34vw" />
           </div>
         )
       }
@@ -54,7 +54,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
           <div class:list={['slot', 'slot-three', 'reveal', 'clip-reveal', isWide(three) && 'is-wide']}>
             <PhotoFrame
               photo={three}
-              index={indexOf(three)}
+              index={indexOf(three, featuredPhotos)}
               useFull
               sizes="(max-width: 860px) 100vw, 96vw"
             />
@@ -65,7 +65,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
       {
         four && (
           <div class:list={['slot', 'slot-four', 'reveal', 'clip-reveal', isWide(four) && 'is-wide']}>
-            <PhotoFrame photo={four} index={indexOf(four)} sizes="(max-width: 860px) 46vw, 30vw" />
+            <PhotoFrame photo={four} index={indexOf(four, featuredPhotos)} sizes="(max-width: 860px) 46vw, 30vw" />
           </div>
         )
       }
@@ -73,7 +73,7 @@ const isWide = (p?: (typeof editorialPhotos)[number]) => !!p && p.width / p.heig
       {
         five && (
           <div class:list={['slot', 'slot-five', 'reveal', 'clip-reveal', isWide(five) && 'is-wide']} style="--reveal-delay: 140ms">
-            <PhotoFrame photo={five} index={indexOf(five)} sizes="(max-width: 860px) 46vw, 26vw" />
+            <PhotoFrame photo={five} index={indexOf(five, featuredPhotos)} sizes="(max-width: 860px) 46vw, 26vw" />
           </div>
         )
       }

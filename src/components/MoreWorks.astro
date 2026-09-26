@@ -1,15 +1,14 @@
 ---
 /** 04 查看更多作品 —— 一条安静的横向预览带，把人领到完整照片墙。 */
-import { photos, featuredPhotos, indexOf } from '../lib/gallery';
+import { galleryPhotos, photoSlug } from '../lib/gallery';
 import { getLang, localePath, t } from '../lib/i18n';
 import PhotoFrame from './PhotoFrame.astro';
 
 const lang = getLang(Astro.url);
 const ui = t(lang);
 
-const featuredIds = new Set(featuredPhotos.map((p) => p.id));
-// 只放还没在首页出现过的作品；不足两张就不摆这条预览带，一张孤零零的很难看
-const strip = photos.filter((p) => !featuredIds.has(p.id)).slice(0, 4);
+// 作品墙里的照片和首页不重复，直接取前几张做预览带
+const strip = galleryPhotos.slice(0, 4);
 ---
 
 <section class="more section" aria-labelledby="more-title">
@@ -23,7 +22,12 @@ const strip = photos.filter((p) => !featuredIds.has(p.id)).slice(0, 4);
         <div class="strip">
           {strip.map((photo, i) => (
             <div class="strip-item reveal clip-reveal" style={`--reveal-delay: ${i * 90}ms`}>
-              <PhotoFrame photo={photo} index={indexOf(photo)} sizes="(max-width: 860px) 46vw, 23vw" />
+              <PhotoFrame
+                photo={photo}
+                index={i}
+                href={localePath(lang, `works/${photoSlug(photo)}`)}
+                sizes="(max-width: 860px) 46vw, 23vw"
+              />
             </div>
           ))}
         </div>

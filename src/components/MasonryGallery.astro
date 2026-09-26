@@ -5,8 +5,11 @@
  * 构建时就按「最矮的一列优先」把照片分好列（保持策展顺序），
  * 浏览器端只在列数变化时重新分配，所以不会有布局跳动。
  */
-import { distribute, type Photo } from '../lib/gallery';
+import { distribute, photoSlug, type Photo } from '../lib/gallery';
 import PhotoFrame from './PhotoFrame.astro';
+import { getLang, localePath } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
 
 interface Props {
   items: Photo[];
@@ -28,7 +31,11 @@ const cols = distribute(items, columns);
             data-index={photo.order - 1}
             data-ratio={(photo.height / photo.width).toFixed(4)}
           >
-            <PhotoFrame photo={photo} index={photo.order - 1} />
+            <PhotoFrame
+              photo={photo}
+              index={photo.order - 1}
+              href={localePath(lang, `works/${photoSlug(photo)}`)}
+            />
           </div>
         ))}
       </div>

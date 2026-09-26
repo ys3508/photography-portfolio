@@ -15,7 +15,8 @@
     "caption": "",
     "featured": true,
     "order": 1,
-    "sourceSize": 2770371
+    "sourceSize": 2770371,
+    "category": null
   },
   {
     "id": "03d36a63f8",
@@ -33,7 +34,8 @@
     "caption": "",
     "featured": true,
     "order": 2,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": null
   },
   {
     "id": "037238861c",
@@ -51,7 +53,8 @@
     "caption": "",
     "featured": true,
     "order": 3,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": null
   },
   {
     "id": "b019d77c6a",
@@ -69,7 +72,8 @@
     "caption": "",
     "featured": true,
     "order": 4,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": null
   },
   {
     "id": "8439e9450a",
@@ -87,7 +91,8 @@
     "caption": "",
     "featured": true,
     "order": 5,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": null
   },
   {
     "id": "1ea935b241",
@@ -105,7 +110,8 @@
     "caption": "",
     "featured": true,
     "order": 6,
-    "sourceSize": 2364523
+    "sourceSize": 2364523,
+    "category": null
   },
   {
     "id": "a40da5cff0",
@@ -123,7 +129,8 @@
     "caption": "",
     "featured": false,
     "order": 7,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "street"
   },
   {
     "id": "ef5284577b",
@@ -141,7 +148,8 @@
     "caption": "",
     "featured": false,
     "order": 8,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "e96de52454",
@@ -159,7 +167,8 @@
     "caption": "",
     "featured": false,
     "order": 9,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "73c2cc4b65",
@@ -177,7 +186,8 @@
     "caption": "",
     "featured": false,
     "order": 10,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "c861eeaf18",
@@ -195,7 +205,8 @@
     "caption": "",
     "featured": false,
     "order": 11,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "a82642087c",
@@ -213,7 +224,8 @@
     "caption": "",
     "featured": false,
     "order": 12,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "33f8e8376c",
@@ -231,7 +243,8 @@
     "caption": "",
     "featured": false,
     "order": 13,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "9d6e5d182d",
@@ -249,7 +262,8 @@
     "caption": "",
     "featured": false,
     "order": 14,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "ee79deb478",
@@ -267,7 +281,8 @@
     "caption": "",
     "featured": false,
     "order": 15,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "9d10949f1e",
@@ -285,7 +300,8 @@
     "caption": "",
     "featured": false,
     "order": 16,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "6d3257ef3d",
@@ -303,7 +319,8 @@
     "caption": "",
     "featured": false,
     "order": 17,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "6e3664dfa1",
@@ -321,7 +338,8 @@
     "caption": "",
     "featured": false,
     "order": 18,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "bd4a8a1be0",
@@ -339,7 +357,8 @@
     "caption": "",
     "featured": false,
     "order": 19,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "1bab0742de",
@@ -357,7 +376,8 @@
     "caption": "",
     "featured": false,
     "order": 20,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "045d73bd82",
@@ -375,7 +395,8 @@
     "caption": "",
     "featured": false,
     "order": 21,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "266d481814",
@@ -393,7 +414,8 @@
     "caption": "",
     "featured": false,
     "order": 22,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "d60bc5492d",
@@ -411,7 +433,8 @@
     "caption": "",
     "featured": false,
     "order": 23,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "street"
   },
   {
     "id": "8f227b5b75",
@@ -429,7 +452,8 @@
     "caption": "",
     "featured": false,
     "order": 24,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "street"
   },
   {
     "id": "2afd9a7a20",
@@ -447,7 +471,8 @@
     "caption": "",
     "featured": false,
     "order": 25,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "726b984d1b",
@@ -465,7 +490,8 @@
     "caption": "",
     "featured": false,
     "order": 26,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   },
   {
     "id": "9d404d558c",
@@ -483,6 +509,7 @@
     "caption": "",
     "featured": false,
     "order": 27,
-    "sourceSize": 2364531
+    "sourceSize": 2364531,
+    "category": "architecture"
   }
 ]

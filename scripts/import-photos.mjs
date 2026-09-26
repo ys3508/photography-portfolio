@@ -53,6 +53,20 @@ const SOURCES = [
   { folder: '作品集', featured: false, note: '完整作品墙' },
 ];
 
+/**
+ * 「作品集」下面的子文件夹名就是分类 —— 把照片拖进「建筑」，它就是建筑。
+ * 不用改任何文件。放在「作品集」根目录下的照片只出现在「全部」里。
+ */
+const FOLDER_CATEGORY = {
+  人文: 'humanity',
+  街头: 'street',
+  自然: 'nature',
+  建筑: 'architecture',
+  边缘群体: 'margins',
+  艺术: 'art',
+  日常生活: 'everyday',
+};
+
 const OUT_FULL = path.join(PROJECT, 'public/photos/full');
 const OUT_THUMB = path.join(PROJECT, 'public/photos/thumbs');
 const GALLERY_JSON = path.join(PROJECT, 'src/data/gallery.json');
@@ -151,15 +165,25 @@ async function main() {
 
   for (const src of SOURCES) {
     const dir = path.join(ICLOUD_BASE, src.folder);
-    const names = (await fs.readdir(dir, { withFileTypes: true }))
-      .filter((e) => e.isFile() && !e.name.startsWith('.'))
-      .map((e) => e.name)
-      .filter((name) => SUPPORTED.has(path.extname(name).toLowerCase()))
-      .sort((a, b) => a.localeCompare(b, 'zh-CN'));
+    // 连子文件夹一起读：子文件夹名 = 分类
+    const found = [];
+    for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      if (entry.isDirectory()) {
+        const sub = path.join(dir, entry.name);
+        for (const f of await fs.readdir(sub)) {
+          if (f.startsWith('.') || !SUPPORTED.has(path.extname(f).toLowerCase())) continue;
+          found.push({ filename: f, file: path.join(sub, f), category: FOLDER_CATEGORY[entry.name] ?? null });
+        }
+      } else if (SUPPORTED.has(path.extname(entry.name).toLowerCase())) {
+        found.push({ filename: entry.name, file: path.join(dir, entry.name), category: null });
+      }
+    }
+    found.sort((a, b) => a.filename.localeCompare(b.filename, 'zh-CN'));
 
-    for (const filename of names) {
+    for (const entry of found) {
       seen += 1;
-      const file = path.join(dir, filename);
+      const { filename, file } = entry;
       const buffer = await fs.readFile(file); // ← 唯一接触原图的操作
       const id = contentId(buffer);
       const existing = byContent.get(id);
@@ -173,6 +197,7 @@ async function main() {
         file,
         filename,
         folder: src.folder,
+        folderCategory: entry.category,
         featured: src.featured,
         stat: await fs.stat(file),
       });
@@ -263,8 +288,9 @@ async function main() {
     // 标题 / 地点 / 说明 / 顺序以 content/photo-meta.json 为准。
     // 没填的就留空 —— 不自动编造。
     if (!meta[filename]) {
-      meta[filename] = { title: '', year: '', location: '', caption: '', order: null };
+      meta[filename] = { title: '', year: '', location: '', caption: '', category: null, order: null };
     }
+    if (!('category' in meta[filename])) meta[filename].category = null;
     const m = meta[filename];
 
     collected.push({
@@ -281,6 +307,8 @@ async function main() {
       year: m.year || year,
       location: m.location ?? '',
       caption: m.caption ?? '',
+      // 分类由文件夹决定；photo-meta 里显式写 category 可以覆盖
+      category: m.category ?? item.folderCategory ?? null,
       // 首页展示与否由文件夹决定；photo-meta 里显式写 featured 可以覆盖
       featured: typeof m.featured === 'boolean' ? m.featured : item.featured,
       order: 0,
@@ -305,6 +333,22 @@ async function main() {
     delete p.taken;
   });
 
+  /*
+    安全闸。
+    iCloud 正在同步、文件夹被临时清空、或者有人正在整理目录时，
+    来源会「看起来」突然少掉一大批。这时候绝不能顺手把网站上的照片删掉。
+    少了三成以上就停下来，什么都不改，让人来确认。
+  */
+  const allowShrink = process.argv.includes('--allow-shrink');
+  if (!allowShrink && previous.length >= 5 && collected.length < previous.length * 0.7) {
+    console.error('\n✗ 停下了：来源照片数从 ' + previous.length + ' 张掉到 ' + collected.length + ' 张。');
+    console.error('  这通常意味着 iCloud 还没同步完，或者有人正在整理文件夹。');
+    console.error('  本次没有改动任何东西 —— 网站上现有的照片原样保留。\n');
+    console.error('  确认来源确实就是这么多，再加 --allow-shrink 重跑：');
+    console.error('    npm run import:photos -- --allow-shrink\n');
+    process.exit(1);
+  }
+
   /* 清理项目里已经没有对应原图的旧副本（只动 public/photos，不动 iCloud） */
   let removed = 0;
   for (const dir of [OUT_FULL, OUT_THUMB]) {
@@ -321,9 +365,15 @@ async function main() {
   await fs.writeFile(META_JSON, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
 
   const featured = collected.filter((p) => p.featured).length;
+  const wall = collected.length - featured;
+  const uncategorised = collected.filter((p) => !p.featured && !p.category).length;
   log('\n────────────────────────────────────────');
-  log(`完整作品墙：${collected.length} 张`);
   log(`首页展示  ：${featured} 张（来自「网站照片」）`);
+  log(`作品墙    ：${wall} 张（来自「作品集」）`);
+  if (uncategorised > 0) {
+    log(`\n提示：作品墙里有 ${uncategorised} 张还没分类，它们只会出现在「全部」里。`);
+    log(`     在 content/photo-meta.json 里填 category 即可（见 content/README.md）。`);
+  }
   if (removed) log(`清理了 ${removed} 个不再需要的网站图片副本`);
   log('iCloud 原图未被修改。\n');
   log('接下来：');

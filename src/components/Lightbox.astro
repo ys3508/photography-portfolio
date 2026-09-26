@@ -4,13 +4,19 @@
  * 交互：← → 切换 / ESC 关闭 / 手机左右滑动 / 点击空白关闭。
  * UI 尽量少：只有计数、必要的箭头，以及低调的标题 / 年份 / 地点。
  */
-import { photos } from '../lib/gallery';
+import { photos, type Photo } from '../lib/gallery';
 import { withBase } from '../lib/paths';
 import { getLang, t } from '../lib/i18n';
 
 const ui = t(getLang(Astro.url));
 
-const payload = photos.map((p) => ({
+interface Props {
+  /** 这个 Lightbox 负责翻哪一组照片；不传就是全部 */
+  items?: Photo[];
+}
+const { items = photos } = Astro.props;
+
+const payload = items.map((p) => ({
   src: withBase(p.src),
   thumb: withBase(p.thumbnail),
   w: p.width,

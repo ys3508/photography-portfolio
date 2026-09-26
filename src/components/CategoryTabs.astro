@@ -1,0 +1,99 @@
+---
+/**
+ * 作品分类标签。
+ * 只显示真的有作品的分类 —— 空分类不摆在那里，等有照片了自己会出现。
+ */
+import { activeCategories, galleryPhotos, photosInCategory } from '../lib/gallery';
+import { getLang, localePath, t } from '../lib/i18n';
+
+interface Props {
+  /** 当前选中的分类 slug；不传表示「全部」 */
+  current?: string;
+}
+const { current } = Astro.props;
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
+
+const tabs = [
+  { slug: '', label: ui.allCategory, href: localePath(lang, 'gallery'), count: galleryPhotos.length },
+  ...activeCategories.map((c) => ({
+    slug: c.slug,
+    label: c[lang],
+    href: localePath(lang, `gallery/${c.slug}`),
+    count: photosInCategory(c.slug).length,
+  })),
+];
+---
+
+{
+  activeCategories.length > 0 && (
+    <nav class="tabs reveal" aria-label={ui.inCategory}>
+      {tabs.map((tab) => (
+        <a
+          class:list={['tab', (current ?? '') === tab.slug && 'is-current']}
+          href={tab.href}
+          aria-current={(current ?? '') === tab.slug ? 'page' : undefined}
+        >
+          <span class="tab-label">{tab.label}</span>
+          <span class="tab-count">{tab.count}</span>
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<style>
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1rem, 2.4vw, 2.25rem);
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+    padding-bottom: 0.45em;
+    position: relative;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    transition: color 400ms var(--ease);
+  }
+
+  .tab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 450ms var(--ease);
+  }
+
+  .tab:hover,
+  .tab.is-current {
+    color: var(--text);
+  }
+
+  .tab:hover::after,
+  .tab.is-current::after {
+    transform: scaleX(1);
+  }
+
+  .tab-count {
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+  }
+
+  .tab.is-current .tab-count {
+    color: var(--accent);
+  }
+</style>

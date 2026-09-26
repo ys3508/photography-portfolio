@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WorksWall from '../../components/WorksWall.astro';
+import { activeCategories, photosInCategory } from '../../lib/gallery';
+import { getLang } from '../../lib/i18n';
+import { categoryName } from '../../config/categories';
+
+export function getStaticPaths() {
+  return activeCategories.map((c) => ({ params: { category: c.slug } }));
+}
+
+const { category } = Astro.params;
+const lang = getLang(Astro.url);
+const items = photosInCategory(category!);
+---
+
+<BaseLayout title={categoryName(category!, lang)}>
+  <WorksWall items={items} category={category} />
+</BaseLayout>
+
+<script>
+  import '../../scripts/masonry';
+</script>

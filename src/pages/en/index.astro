@@ -10,6 +10,7 @@ import FeaturedEditorial from '../../components/FeaturedEditorial.astro';
 import MoreWorks from '../../components/MoreWorks.astro';
 import AboutTeaser from '../../components/AboutTeaser.astro';
 import Lightbox from '../../components/Lightbox.astro';
+import { featuredPhotos } from '../../lib/gallery';
 ---
 
 <BaseLayout overlayHeader>
@@ -17,5 +18,5 @@ import Lightbox from '../../components/Lightbox.astro';
   <FeaturedEditorial />
   <MoreWorks />
   <AboutTeaser />
-  <Lightbox />
+  <Lightbox items={featuredPhotos} />
 </BaseLayout>

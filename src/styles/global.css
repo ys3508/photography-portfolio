@@ -573,6 +573,8 @@ h3 {
 .on-wash *,
 /* 章节标题右侧的说明文字永远贴着右缘，所以永远落在深色上 */
 .section-head > .meta,
+/* 详情页右上角的分类同理 */
+.crumbs > .cat,
 /* 页脚右侧的导航同理 */
 .site-footer .links a {
   color: rgba(244, 242, 236, 0.86);
@@ -628,6 +630,11 @@ h3 {
     color: var(--text);
   }
 
+  /* 窄屏上分类标签会换行，不一定落在红色那一侧 */
+  .crumbs > .cat {
+    color: var(--accent);
+  }
+
   /* 首页底部那一行「精品集 ／ 共 14 张」在手机上是左右分开的两端，
      只有右边那个在红上 */
   .ledger.on-wash > :first-child {
@@ -645,8 +652,21 @@ h3 {
     --page-x: clamp(1.25rem, 6vw, 2.5rem);
   }
 
+  /* 窄屏上英文提示比中文长得多，和标题挤在一行会被切掉 —— 让它换行 */
   .section-head {
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
     padding-bottom: clamp(1.5rem, 5vw, 2.25rem);
     margin-bottom: clamp(2rem, 7vw, 3rem);
+  }
+
+  /*
+    提示文字在窄屏上换到自己一行、靠左，所以不能再用象牙色（左边是浅底）。
+    同时收窄，让它在干净的那一侧折行，不伸进朱染里。
+  */
+  .section-head > .meta {
+    flex-basis: 100%;
+    max-width: 74%;
+    color: var(--text-muted);
   }
 }

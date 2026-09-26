@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoDetail from '../../components/PhotoDetail.astro';
+import { galleryPhotos, photoSlug, findBySlug } from '../../lib/gallery';
+import { getLang, t } from '../../lib/i18n';
+import { categoryName } from '../../config/categories';
+
+export function getStaticPaths() {
+  return galleryPhotos.map((p) => ({ params: { slug: photoSlug(p) } }));
+}
+
+const { slug } = Astro.params;
+const photo = findBySlug(slug!)!;
+const lang = getLang(Astro.url);
+const ui = t(lang);
+
+const title = photo.title || categoryName(photo.category ?? null, lang) || ui.pageWorksTitle;
+---
+
+<BaseLayout title={title}>
+  <PhotoDetail photo={photo} />
+</BaseLayout>
