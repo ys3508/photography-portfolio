@@ -41,7 +41,7 @@ function isActive(href: string) {
     position: sticky;
     top: 0;
     z-index: 60;
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom: 1px solid transparent;
@@ -61,7 +61,7 @@ function isActive(href: string) {
   }
 
   .site-header.is-overlay.is-stuck {
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom-color: var(--line);
@@ -122,6 +122,27 @@ function isActive(href: string) {
   .nav-link:hover::after,
   .nav-link.is-active::after {
     transform: scaleX(1);
+  }
+
+  /*
+    只在宽屏上生效：窄屏的朱染收在最外侧，导航那里是浅色的。
+    首页顶部导航是完全透明的，而在宽屏上它正好落在朱染的深色那一侧，
+    所以这时候导航文字用象牙色；一旦滚动、导航条浮出浅色背景，就换回深色。
+    左边的品牌名一直在浅色区（大理石那半边），保持深色不变。
+  */
+  @media (min-width: 861px) {
+    .site-header.is-overlay:not(.is-stuck) .nav-link {
+      color: rgba(244, 242, 236, 0.74);
+    }
+
+    .site-header.is-overlay:not(.is-stuck) .nav-link:hover,
+    .site-header.is-overlay:not(.is-stuck) .nav-link.is-active {
+      color: #f4f2ec;
+    }
+
+    .site-header.is-overlay:not(.is-stuck) :global(.theme-toggle) {
+      color: rgba(244, 242, 236, 0.85);
+    }
   }
 
   @media (max-width: 420px) {

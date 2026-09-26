@@ -29,12 +29,12 @@ const loading = variant === 'hero' ? 'eager' : 'lazy';
 <style>
   /* ---------- 封面：从左缘切出去，填满原本空着的半边 ---------- */
   .is-hero img {
-    left: -9%;
-    top: 50%;
+    left: -11%;
+    top: 38%;
     transform: translateY(-50%);
-    width: min(62%, 52rem);
+    width: min(56%, 46rem);
     height: auto;
-    --marble-focus: 46% 46%;
+    --marble-focus: 42% 52%;
   }
 
   /* ---------- 摄影陈述：居中，更淡，让朱红的「思」正好落在石膏像上 ---------- */
@@ -44,7 +44,7 @@ const loading = variant === 'hero' ? 'eager' : 'lazy';
     transform: translate(-50%, -50%);
     width: min(46%, 30rem);
     height: auto;
-    --marble-focus: 50% 44%;
+    --marble-focus: 50% 42%;
     opacity: calc(var(--marble-opacity) * 0.72);
   }
 
@@ -61,16 +61,18 @@ const loading = variant === 'hero' ? 'eager' : 'lazy';
 
   /* ---------- 手机：照片是满幅的，底纹再淡一些，只留一点气息 ---------- */
   @media (max-width: 640px) {
+    /* 手机上朱染收在最右侧，所以石膏像回到左边，两者不打架 */
     .is-hero img {
-      left: auto;
-      right: -34%;
-      top: 8%;
+      left: -26%;
+      right: auto;
+      top: 6%;
       transform: none;
-      width: 94%;
+      width: 112%;
+      --marble-focus: 48% 40%;
     }
     .is-hero img,
     .is-statement img {
-      opacity: calc(var(--marble-opacity) * 0.62);
+      opacity: calc(var(--marble-opacity) * 0.72);
     }
     .is-statement img {
       width: 82%;

@@ -29,9 +29,35 @@
 
   /* 大理石底纹的混合方式：白天像一层阴影落下去，夜晚像从黑暗里浮出来 */
   --marble-blend: multiply;
-  --marble-opacity: 0.17;
+  --marble-opacity: 0.27;
+  --marble-blur: 0px;
 
-  --font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC',
+  /* 朱染 —— 整页背景从左到右渐渐变红，右缘最深。
+     它在所有内容的最底层，照片是不透明的，所以只会出现在照片之间的空白里，
+     永远不会给摄影作品染色。 */
+  /*
+    朱染的每一档都是手调的不透明色，不是把深酒红稀释出来的。
+    稀释深红一定会经过灰粉，那是廉价感的来源；
+    这里让它走「暖白 → 干玫瑰 → 深酒红」，中段保持自己的色度。
+  */
+  /*
+    朱染的每一档都是手调的不透明色。
+    关键：中段走「暖灰褐 → 陶土 → 砖红」，不走粉色。
+    把深酒红稀释在浅底上必然经过灰粉，那是廉价感的来源；
+    走泥土色，读起来才像墨渗进纸里。
+  */
+  --wash: linear-gradient(
+    to right,
+    #f4f2ec 0%,
+    #f4f2ec 50%,
+    #efe7de 62%,
+    #d3b8a6 72%,
+    #9e6a5b 80%,
+    #7c393e 86%,
+    #63212f 91%,
+    #531426 96%,
+    #480818 100%
+  ); --font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC',
     'STSong', serif;
   --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui,
     -apple-system, sans-serif;
@@ -63,9 +89,21 @@
   --accent-on: #111111;
 
   --marble-blend: screen;
-  --marble-opacity: 0.16;
+  --marble-opacity: 0.3;
+  --marble-blur: 0px;
 
-  color-scheme: dark;
+  /* 深色底上红色会被吃掉，所以夜间的朱染要更亮、更浓一点才站得住 */
+  --wash: linear-gradient(
+    to right,
+    #111111 0%,
+    #111111 44%,
+    #19100f 58%,
+    #2a1512 70%,
+    #47191d 80%,
+    #672029 88%,
+    #86253a 95%,
+    #9a2b43 100%
+  ); color-scheme: dark;
 }
 
 /* --------------------------------------------------------------------------
@@ -84,7 +122,14 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  /*
+    朱染 —— 整页背景从左到右渐渐变红，右缘最深。
+    渐变是纯横向的，所以不需要额外的图层，直接画在 body 上即可：
+    没有多余的 DOM，也不会和任何东西抢层级。
+    照片是不透明的，红色只会出现在照片之间的空白里，永远不给作品染色。
+  */
+  background-color: var(--bg);
+  background-image: var(--wash);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -472,25 +517,93 @@ h3 {
   transition: opacity var(--theme-duration) var(--ease);
   /* 四周化开 —— 遮罩要比图本身小一圈，否则边缘会留下一条硬线 */
   -webkit-mask-image: radial-gradient(
-    68% 58% at var(--marble-focus, 40% 46%),
+    86% 78% at var(--marble-focus, 40% 46%),
     #000 0%,
-    rgba(0, 0, 0, 0.92) 26%,
-    rgba(0, 0, 0, 0.45) 55%,
-    transparent 76%
+    rgba(0, 0, 0, 0.95) 28%,
+    rgba(0, 0, 0, 0.66) 48%,
+    rgba(0, 0, 0, 0.36) 64%,
+    rgba(0, 0, 0, 0.14) 80%,
+    rgba(0, 0, 0, 0.04) 92%,
+    transparent 100%
   );
   mask-image: radial-gradient(
-    68% 58% at var(--marble-focus, 40% 46%),
+    86% 78% at var(--marble-focus, 40% 46%),
     #000 0%,
-    rgba(0, 0, 0, 0.92) 26%,
-    rgba(0, 0, 0, 0.45) 55%,
-    transparent 76%
+    rgba(0, 0, 0, 0.95) 28%,
+    rgba(0, 0, 0, 0.66) 48%,
+    rgba(0, 0, 0, 0.36) 64%,
+    rgba(0, 0, 0, 0.14) 80%,
+    rgba(0, 0, 0, 0.04) 92%,
+    transparent 100%
   );
-  /* 一点点模糊，让它读起来像纸的肌理，而不是一张压在下面的照片 */
-  filter: blur(0.6px);
+  filter: blur(var(--marble-blur, 0px));
 }
 
 /* 底纹之上的所有内容都要抬一层，否则会被盖住 */
 .above-ground {
   position: relative;
   z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   11. 落在朱染右缘上的文字
+   页面右侧是深色，那里的小字一律改成象牙色 —— 这是刻意的，
+   像印在红色书口上的页码。
+   -------------------------------------------------------------------------- */
+.on-wash,
+.on-wash a,
+/* 章节标题右侧的说明文字永远贴着右缘，所以永远落在深色上 */
+.section-head > .meta,
+/* 页脚右侧的导航同理 */
+.site-footer .links a {
+  color: rgba(244, 242, 236, 0.86);
+}
+
+.on-wash a:hover,
+.site-footer .links a:hover {
+  color: #f4f2ec;
+}
+
+/* --------------------------------------------------------------------------
+   12. 窄屏上的朱染
+   手机是竖的，内容占满整个宽度，横向的长渐变会吃掉半个屏幕。
+   所以窄屏上把朱染压回最外侧，只留一道染红的书口 ——
+   同样的想法，只是收窄；右缘的小字也随之换回常规颜色。
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  :root {
+    --wash: linear-gradient(
+      to right,
+      #f4f2ec 0%,
+      #f4f2ec 80%,
+      #e8d6c8 88%,
+      #b7736a 94%,
+      #7a2c39 98%,
+      #5d1526 100%
+    );
+  }
+
+  :root[data-theme='night'] {
+    --wash: linear-gradient(
+      to right,
+      #111111 0%,
+      #111111 78%,
+      #2a1418 87%,
+      #5a1a28 94%,
+      #832338 98%,
+      #932840 100%
+    );
+  }
+
+  .on-wash,
+  .on-wash a,
+  .section-head > .meta,
+  .site-footer .links a {
+    color: var(--text-muted);
+  }
+
+  .on-wash a:hover,
+  .site-footer .links a:hover {
+    color: var(--text);
+  }
 }
