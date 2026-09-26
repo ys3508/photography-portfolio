@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "import:photos": "node scripts/import-photos.mjs",
-    "placeholders": "node scripts/make-placeholders.mjs"
+    "placeholders": "node scripts/make-placeholders.mjs",
+    "texture": "node scripts/make-texture.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1"

@@ -22,7 +22,8 @@ if (dataNode && root) {
   const photos: LightboxPhoto[] = JSON.parse(dataNode.textContent || '[]');
   const image = root.querySelector<HTMLImageElement>('[data-lightbox-image]')!;
   const caption = root.querySelector<HTMLElement>('[data-lightbox-caption]')!;
-  const counter = root.querySelector<HTMLElement>('[data-lightbox-counter]')!;
+  const counterNow = root.querySelector<HTMLElement>('[data-lightbox-index]')!;
+  const counterTotal = root.querySelector<HTMLElement>('[data-lightbox-total]')!;
   const btnClose = root.querySelector<HTMLButtonElement>('[data-lightbox-close]')!;
   const btnPrev = root.querySelector<HTMLButtonElement>('[data-lightbox-prev]')!;
   const btnNext = root.querySelector<HTMLButtonElement>('[data-lightbox-next]')!;
@@ -65,7 +66,8 @@ if (dataNode && root) {
 
     const bits = [p.title, p.location, p.year, p.caption].filter(Boolean);
     caption.innerHTML = bits.map((b) => `<span>${b}</span>`).join('');
-    counter.textContent = `${index + 1} / ${photos.length}`;
+    counterNow.textContent = String(index + 1).padStart(2, '0');
+    counterTotal.textContent = String(photos.length).padStart(2, '0');
 
     preload(index + 1);
     preload(index - 1 < 0 ? photos.length - 1 : index - 1);

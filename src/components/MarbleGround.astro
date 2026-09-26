@@ -1,0 +1,85 @@
+---
+/**
+ * 大理石底纹图层。
+ * 希腊石膏头像作为整个网站的"底子"，不是装饰画，而是纸的纹理 ——
+ * 它只出现在没有照片的地方（首页封面的空白半边、摄影陈述那一页），
+ * 绝不出现在照片墙后面，因为那会和摄影作品抢眼睛。
+ *
+ * 具体的混合方式与不透明度由 global.css 的 --marble-blend / --marble-opacity
+ * 按白天 / 夜晚切换，这里只负责位置与构图。
+ */
+import { withBase } from '../lib/paths';
+
+interface Props {
+  /** hero = 从左缘切出去的大头像；statement = 居中、更淡，衬在「思」后面 */
+  variant?: 'hero' | 'statement';
+}
+const { variant = 'hero' } = Astro.props;
+---
+
+<div class:list={['marble-ground', `is-${variant}`]} aria-hidden="true">
+  <picture>
+    <source type="image/avif" srcset={withBase('texture/marble-head.avif')} />
+    <img src={withBase('texture/marble-head.webp')} alt="" loading="lazy" decoding="async" />
+  </picture>
+</div>
+
+<style>
+  /* ---------- 封面：从左缘切出去，填满原本空着的半边 ---------- */
+  .is-hero img {
+    left: -9%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(62%, 52rem);
+    height: auto;
+    --marble-focus: 46% 46%;
+  }
+
+  /* ---------- 摄影陈述：居中，更淡，让朱红的「思」正好落在石膏像上 ---------- */
+  .is-statement img {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(46%, 30rem);
+    height: auto;
+    --marble-focus: 50% 44%;
+    opacity: calc(var(--marble-opacity) * 0.72);
+  }
+
+  /* ---------- 平板 ---------- */
+  @media (max-width: 1080px) {
+    .is-hero img {
+      left: -22%;
+      width: min(76%, 34rem);
+    }
+    .is-statement img {
+      width: min(62%, 24rem);
+    }
+  }
+
+  /* ---------- 手机：照片是满幅的，底纹再淡一些，只留一点气息 ---------- */
+  @media (max-width: 640px) {
+    .is-hero img {
+      left: auto;
+      right: -34%;
+      top: 8%;
+      transform: none;
+      width: 94%;
+    }
+    .is-hero img,
+    .is-statement img {
+      opacity: calc(var(--marble-opacity) * 0.62);
+    }
+    .is-statement img {
+      width: 82%;
+    }
+  }
+
+  /* 有些浏览器不支持 mask-image，退回到纯低不透明度，效果依旧成立 */
+  @supports not ((mask-image: radial-gradient(#000, transparent)) or
+    (-webkit-mask-image: radial-gradient(#000, transparent))) {
+    .marble-ground img {
+      opacity: calc(var(--marble-opacity) * 0.6);
+    }
+  }
+</style>

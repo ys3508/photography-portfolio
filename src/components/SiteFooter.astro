@@ -34,8 +34,19 @@ const span =
 
 <style>
   .site-footer {
+    position: relative;
     border-top: 1px solid var(--line);
     padding-block: clamp(3rem, 7vw, 5rem);
+  }
+
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: clamp(2.25rem, 4vw, 3.5rem);
+    height: 1px;
+    background: var(--accent);
   }
 
   .inner {

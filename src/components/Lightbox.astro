@@ -46,7 +46,11 @@ const payload = photos.map((p) => ({
     >
   </button>
 
-  <p class="counter" data-lightbox-counter aria-live="polite"></p>
+  <p class="counter" aria-live="polite">
+    <span class="counter-now" data-lightbox-index></span>
+    <span class="counter-sep" aria-hidden="true">/</span>
+    <span class="counter-total" data-lightbox-total></span>
+  </p>
 </div>
 
 <style>
@@ -153,10 +157,17 @@ const payload = photos.map((p) => ({
     transform: translateX(-50%);
     bottom: clamp(1rem, 3vh, 1.75rem);
     margin: 0;
+    display: flex;
+    gap: 0.6em;
     font-size: 0.6875rem;
     letter-spacing: 0.22em;
-    color: rgba(238, 236, 231, 0.62);
+    color: rgba(238, 236, 231, 0.42);
     font-variant-numeric: tabular-nums;
+  }
+
+  /* 当前这一张用朱红标出来 —— 在全黑的看图界面里，这是唯一的一点颜色 */
+  .counter-now {
+    color: #ca4954;
   }
 
   /* 手机：隐藏箭头，改用滑动，把画面完全交给照片 */

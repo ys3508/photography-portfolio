@@ -1,9 +1,12 @@
 ---
 import { SITE } from '../config/site';
+import MarbleGround from './MarbleGround.astro';
 ---
 
 <section class="statement section" aria-labelledby="statement-title">
-  <div class="shell inner">
+  <MarbleGround variant="statement" />
+
+  <div class="shell inner above-ground">
     <p class="eyebrow reveal" id="statement-title">Artist Statement · 摄影陈述</p>
 
     <figure class="seal seal-lg seal-center reveal" style="--reveal-delay: 120ms">
@@ -25,6 +28,8 @@ import { SITE } from '../config/site';
 
 <style>
   .statement {
+    position: relative;
+    overflow: hidden;
     border-top: 1px solid var(--line);
   }
 

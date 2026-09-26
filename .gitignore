@@ -59,3 +59,8 @@ temp/
 *.TIF
 *.tiff
 *.TIFF
+
+# 设计源文件（原始素材，网站用的版本由 scripts/make-texture.mjs 生成）
+/greek_statues.jpg
+/red.png
+design-source/

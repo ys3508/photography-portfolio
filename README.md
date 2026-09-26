@@ -67,7 +67,8 @@ npm run dev
 | `npm run preview` | 预览构建好的线上版本 |
 | `npm run check` | 检查代码有没有类型错误 |
 | `npm run import:photos` | **从 iCloud 精品集导入照片**（最常用） |
-| `npm run placeholders` | 重新生成占位图（叔叔还没给照片时用） |
+| `npm run placeholders` | 重新生成占位图（还没有真照片时用） |
+| `npm run texture` | 重新生成背景大理石底纹 |
 
 ---
 
@@ -198,6 +199,17 @@ export const DAY_END = 19;    // 其余时间夜晚模式
 **关于 `statement`**：现在是空的。留空时，「摄影陈述」一节只呈现居中的「思」和它的英文，
 页面依然完整、甚至更安静。等王宇本人写好 80–150 字，填进去就会自动出现在「思」的下方。
 **不要由他人代写。**
+
+### 换背景底纹 / 改朱红
+
+**底纹**（首页封面、摄影陈述、关于页背后那层若隐若现的石膏像）：
+把新的图片放到 `design-source/greek_statues.jpg`，跑 `npm run texture` 即可。
+浓淡在 `src/styles/global.css` 里改 `--marble-opacity`（白天 0.17 / 夜晚 0.16）。
+位置在 `src/components/MarbleGround.astro` 里改。
+
+**朱红**：同样在 `global.css` 顶部，`--accent`。
+白天 `#480818`，夜晚 `#ca4954`（夜晚必须提亮，原色在黑底上看不见）。
+改一处，全站的「思」、细线、下划线、选中底色、焦点环会一起变。
 
 **换摄影师人像**：把照片存成 `public/photos/portrait/portrait.jpg`（建议竖构图，4:5 左右）。
 **换分享预览图**：把一张代表作存成 `public/photos/share/og-cover.jpg`（建议 1200×630）。

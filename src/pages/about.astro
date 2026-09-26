@@ -3,11 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
 import { photos } from '../lib/gallery';
+import MarbleGround from '../components/MarbleGround.astro';
 ---
 
 <BaseLayout title="关于" description={`关于摄影师 ${SITE.photographerName}`}>
-  <section class="section">
-    <div class="shell">
+  <section class="section about-page">
+    <MarbleGround variant="statement" />
+
+    <div class="shell above-ground">
       <header class="section-head">
         <h1 class="section-title reveal">关于摄影师</h1>
         <p class="meta reveal">{photos.length} 张作品</p>
@@ -49,6 +52,11 @@ import { photos } from '../lib/gallery';
 </BaseLayout>
 
 <style>
+  .about-page {
+    position: relative;
+    overflow: hidden;
+  }
+
   .about-grid {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);

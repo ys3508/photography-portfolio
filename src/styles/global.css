@@ -20,6 +20,17 @@
   --overlay: #0b0b0b;
   --overlay-text: #eeece7;
 
+  /* 朱 —— 全站唯一的一点颜色。只用在文字和线条上，绝不做色块。
+     白天用原始的深胭脂（对暖白底 14:1），夜晚提亮成偏暖的朱砂，
+     否则在 #111 上会彻底消失。 */
+  --accent: #480818;
+  --accent-line: rgba(72, 8, 24, 0.55);
+  --accent-on: #f4f2ec;
+
+  /* 大理石底纹的混合方式：白天像一层阴影落下去，夜晚像从黑暗里浮出来 */
+  --marble-blend: multiply;
+  --marble-opacity: 0.17;
+
   --font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC',
     'STSong', serif;
   --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui,
@@ -46,6 +57,13 @@
   --line: rgba(238, 236, 231, 0.16);
   --line-strong: rgba(238, 236, 231, 0.32);
   --photo-rest: rgba(238, 236, 231, 0.05);
+
+  --accent: #ca4954;
+  --accent-line: rgba(202, 73, 84, 0.6);
+  --accent-on: #111111;
+
+  --marble-blend: screen;
+  --marble-opacity: 0.16;
 
   color-scheme: dark;
 }
@@ -105,13 +123,13 @@ button {
 }
 
 :focus-visible {
-  outline: 1px solid var(--text);
+  outline: 1px solid var(--accent);
   outline-offset: 4px;
 }
 
 ::selection {
-  background: var(--text);
-  color: var(--bg);
+  background: var(--accent);
+  color: var(--accent-on);
 }
 
 /* --------------------------------------------------------------------------
@@ -188,6 +206,7 @@ h3 {
 }
 
 .section-head {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -195,6 +214,17 @@ h3 {
   padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
   border-bottom: 1px solid var(--line);
   margin-bottom: clamp(3.5rem, 7vw, 6.5rem);
+}
+
+/* 章节线左端的一小段朱红 —— 像书页边上的红色标记 */
+.section-head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: clamp(2.25rem, 4vw, 3.5rem);
+  height: 1px;
+  background: var(--accent);
 }
 
 .rule {
@@ -220,7 +250,7 @@ h3 {
   bottom: 0;
   width: 100%;
   height: 1px;
-  background: currentColor;
+  background: var(--accent);
   transform-origin: right;
   transform: scaleX(1);
   transition: transform 500ms var(--ease);
@@ -387,7 +417,7 @@ h3 {
   line-height: 1;
   letter-spacing: 0.06em;
   font-size: clamp(2.5rem, 5vw, 4.25rem);
-  color: var(--text);
+  color: var(--accent);
 }
 
 .seal-latin {
@@ -405,7 +435,7 @@ h3 {
   content: '';
   width: clamp(2rem, 4vw, 3.5rem);
   height: 1px;
-  background: var(--line-strong);
+  background: var(--accent);
 }
 
 .seal-lg .seal-mark {
@@ -415,4 +445,52 @@ h3 {
 .seal-center {
   justify-items: center;
   text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   9. 大理石底纹
+   希腊石膏头像退到最底层，用混合模式而不是不透明度去"化"进背景里：
+   白天 multiply —— 高光处等于没有变化，只有暗部留下轮廓，像一层浅浅的阴影；
+   夜晚 screen   —— 暗部消失，只剩高光，石膏像从黑暗里浮出来。
+   永远在照片下面，永远不参与点击。
+   -------------------------------------------------------------------------- */
+.marble-ground {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+.marble-ground img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  mix-blend-mode: var(--marble-blend);
+  opacity: var(--marble-opacity);
+  transition: opacity var(--theme-duration) var(--ease);
+  /* 四周化开 —— 遮罩要比图本身小一圈，否则边缘会留下一条硬线 */
+  -webkit-mask-image: radial-gradient(
+    68% 58% at var(--marble-focus, 40% 46%),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 26%,
+    rgba(0, 0, 0, 0.45) 55%,
+    transparent 76%
+  );
+  mask-image: radial-gradient(
+    68% 58% at var(--marble-focus, 40% 46%),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 26%,
+    rgba(0, 0, 0, 0.45) 55%,
+    transparent 76%
+  );
+  /* 一点点模糊，让它读起来像纸的肌理，而不是一张压在下面的照片 */
+  filter: blur(0.6px);
+}
+
+/* 底纹之上的所有内容都要抬一层，否则会被盖住 */
+.above-ground {
+  position: relative;
+  z-index: 1;
 }

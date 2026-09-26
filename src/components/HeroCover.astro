@@ -13,6 +13,7 @@
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
 import { photos, featuredPhotos } from '../lib/gallery';
+import MarbleGround from './MarbleGround.astro';
 
 const lead = featuredPhotos[0] ?? photos[0];
 const second = featuredPhotos[1] ?? photos[1];
@@ -25,7 +26,9 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
 ---
 
 <section class="cover" aria-label="封面">
-  <div class="shell grid">
+  <MarbleGround variant="hero" />
+
+  <div class="shell grid above-ground">
     <div class="masthead">
       <h1 class="display name">{SITE.photographerName}</h1>
       {SITE.photographerNameLatin && <p class="latin">{SITE.photographerNameLatin}</p>}
