@@ -86,7 +86,10 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       }
     </div>
 
-    <p class="tagline lede">{SITE.tagline}</p>
+    <figure class="seal tagline">
+      <span class="seal-mark">{SITE.motto}</span>
+      <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
+    </figure>
 
     <div class="ledger">
       <span class="meta">精品集</span>
@@ -103,7 +106,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     min-height: 100svh;
     display: flex;
     align-items: center;
-    padding-block: clamp(5rem, 11vh, 7.5rem) clamp(3rem, 8vh, 5rem);
+    padding-block: clamp(5rem, 10.5vh, 7rem) clamp(2.5rem, 6vh, 4rem);
     overflow: hidden;
   }
 
@@ -127,13 +130,13 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
   .name {
     margin: 0;
     font-size: clamp(2.35rem, 7.2vw, 6.25rem);
-    letter-spacing: -0.012em;
+    letter-spacing: 0.04em;
   }
 
   .latin {
-    margin: 0.55rem 0 0;
+    margin: 0.9rem 0 0;
     font-size: 0.6875rem;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
     color: var(--text-muted);
   }
@@ -156,7 +159,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
   }
 
   .plate-second .frame {
-    height: clamp(5rem, 14svh, 9.5rem);
+    height: clamp(4.5rem, 12svh, 8rem);
     width: auto;
     max-width: 100%;
   }
@@ -186,7 +189,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     display: block;
     position: relative;
     aspect-ratio: 4 / 5;
-    height: clamp(10.5rem, 32svh, 21rem);
+    height: clamp(9.5rem, 28svh, 18.5rem);
     width: auto;
     overflow: hidden;
     background: var(--photo-rest);
@@ -213,18 +216,20 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
   }
 
   .plate-lead .frame {
-    height: clamp(16rem, 52svh, 36rem);
+    height: clamp(15rem, 45svh, 32rem);
     width: auto;
     max-width: 100%;
   }
 
   /* ---------- 文字 ---------- */
   .tagline {
-    grid-column: 1 / 10;
+    grid-column: 1 / 8;
     grid-row: 3;
-    margin: clamp(1.75rem, 5vh, 3.25rem) 0 0;
-    max-width: 24em;
-    color: var(--text);
+    margin: clamp(1.75rem, 4.5vh, 3rem) 0 0;
+  }
+
+  .tagline .seal-mark {
+    font-size: clamp(2.25rem, 3.6vw, 3.25rem);
   }
 
   .ledger {
@@ -329,7 +334,6 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       grid-column: 4 / -1;
       grid-row: 3;
       align-self: end;
-      font-size: clamp(1rem, 3.4vw, 1.25rem);
       margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
     }
 

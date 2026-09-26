@@ -25,12 +25,17 @@ import { photos } from '../lib/gallery';
               data-loaded="false"
             />
           </span>
-          <figcaption class="meta cap">{SITE.photographerName}</figcaption>
+          <figcaption class="meta cap">{SITE.photographerName}　{SITE.photographerNameLatin}</figcaption>
         </figure>
 
         <div class="prose">
-          <p class="lede reveal">{SITE.tagline}</p>
-          <p class="body-text reveal" style="--reveal-delay: 120ms">{SITE.statement}</p>
+          <figure class="seal seal-lg reveal">
+            <span class="seal-mark">{SITE.motto}</span>
+            <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
+          </figure>
+          {SITE.statement && (
+            <p class="body-text reveal" style="--reveal-delay: 120ms">{SITE.statement}</p>
+          )}
           {SITE.aboutExtra && (
             <p class="body-text reveal" style="--reveal-delay: 200ms">{SITE.aboutExtra}</p>
           )}
@@ -78,7 +83,7 @@ import { photos } from '../lib/gallery';
 
   .prose {
     display: grid;
-    gap: 1.5rem;
+    gap: clamp(1.75rem, 3.5vw, 2.75rem);
   }
 
   .prose p {

@@ -21,8 +21,13 @@ import { withBase } from '../lib/paths';
 
     <div class="text">
       <p class="eyebrow reveal" id="about-title">关于摄影师</p>
-      <p class="lede reveal" style="--reveal-delay: 100ms">{SITE.tagline}</p>
-      <p class="body-text reveal" style="--reveal-delay: 180ms">{SITE.statement}</p>
+      <figure class="seal reveal" style="--reveal-delay: 100ms">
+        <span class="seal-mark">{SITE.motto}</span>
+        <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
+      </figure>
+      {SITE.statement && (
+        <p class="body-text reveal" style="--reveal-delay: 180ms">{SITE.statement}</p>
+      )}
       <p class="reveal" style="--reveal-delay: 260ms">
         <a class="link" href={withBase('about')}>关于摄影师</a>
       </p>
@@ -64,7 +69,7 @@ import { withBase } from '../lib/paths';
 
   .text {
     display: grid;
-    gap: 1.25rem;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
     align-content: center;
   }
 

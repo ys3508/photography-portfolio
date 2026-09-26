@@ -1,6 +1,8 @@
-# 叔叔摄影作品集
+# 王宇 摄影作品集
 
-一个安静的个人摄影网站 —— 个人摄影画册 × 线上摄影展 × 摄影师个人档案。
+**思 · Think and feel the world**
+
+摄影师 **王宇（Yu Wang）** 的个人摄影网站 —— 个人摄影画册 × 线上摄影展 × 摄影师个人档案。
 不是商业接单网站，没有预约、没有商城、没有评论。照片是唯一的主角。
 
 - **网站地址**：https://ys3508.github.io/photography-portfolio/
@@ -173,20 +175,29 @@ content/photo-meta.json       照片信息表（会新增条目，已填的内�
 
 ```ts
 export const SITE = {
-  photographerName: '【摄影师姓名】',      // 导航品牌名 + 首页大字 + 网页标题
-  photographerNameLatin: '',              // 拼音 / 英文名，留空则不显示
-  tagline: '【一句摄影理念】',              // 首页封面那句话
-  statement: '【80–150字摄影陈述】...',    // 首页 Artist Statement
-  aboutExtra: '',                         // 关于页面的补充段落
-  email: '',                              // 留空则页脚不显示联系方式
-  description: '...',                     // 分享到微信 / 搜索引擎时的说明
-  ogImage: 'photos/share/og-cover.jpg',   // 分享预览图
-  portrait: 'photos/portrait/portrait.jpg', // 摄影师人像
+  photographerName: '王宇',              // 导航品牌名 + 首页刊头 + 网页标题
+  photographerNameLatin: 'Yu Wang',      // 拼音 / 英文名，留空则不显示
+
+  motto: '思',                           // 摄影理念那一个字
+  mottoLatin: 'Think and feel the world',// 它的英文
+
+  statement: '',                         // 80–150 字摄影陈述；留空时页面只呈现「思」
+  aboutExtra: '',                        // 关于页面的补充段落
+  email: '',                             // 留空则页脚不显示联系方式
+  description: '...',                    // 分享到微信 / 搜索引擎时的说明
+  ogImage: 'photos/share/og-cover.jpg',  // 分享预览图
+  portrait: 'photos/portrait/portrait.jpg',
 };
 
 export const DAY_START = 7;   // 7:00–19:00 白天模式
 export const DAY_END = 19;    // 其余时间夜晚模式
 ```
+
+`motto` 与 `mottoLatin` 成对出现，像一方钤印 —— 首页封面、摄影陈述、关于页共用同一套排法。
+
+**关于 `statement`**：现在是空的。留空时，「摄影陈述」一节只呈现居中的「思」和它的英文，
+页面依然完整、甚至更安静。等王宇本人写好 80–150 字，填进去就会自动出现在「思」的下方。
+**不要由他人代写。**
 
 **换摄影师人像**：把照片存成 `public/photos/portrait/portrait.jpg`（建议竖构图，4:5 左右）。
 **换分享预览图**：把一张代表作存成 `public/photos/share/og-cover.jpg`（建议 1200×630）。

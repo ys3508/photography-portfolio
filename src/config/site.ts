@@ -1,30 +1,42 @@
 /**
  * 网站全部「可修改文字 / 设置」集中在这一个文件。
- * 以后要改摄影师姓名、理念、白天黑夜时间，只需要改这里。
+ * 以后要改姓名、理念、陈述、白天黑夜时间，只需要改这里。
  */
 
 export const SITE = {
-  /** 摄影师姓名（导航栏品牌名 + 首页大字 + 网页标题） */
-  photographerName: '【摄影师姓名】',
-  /** 可选：姓名拼音 / 英文名，留空则不显示 */
-  photographerNameLatin: '',
-  /** 一句摄影理念，首页封面使用。建议 10–20 字 */
-  tagline: '【一句摄影理念】',
-  /** 80–150 字摄影陈述，首页 Artist Statement 段落使用 */
-  statement:
-    '【80–150字摄影陈述。这里留给叔叔本人的文字：为什么拍照、在拍什么、想让看照片的人感受到什么。等叔叔提供真实内容之后替换这段占位文字，不要由他人代写。】',
+  /** 摄影师姓名（导航品牌名 + 首页刊头 + 网页标题） */
+  photographerName: '王宇',
+  /** 拼音 / 英文名，留空则不显示 */
+  photographerNameLatin: 'Yu Wang',
+
+  /**
+   * 摄影理念。
+   * motto 是那一个字，mottoLatin 是它的英文。
+   * 两者成对出现，像一方印章 —— 首页、摄影陈述、关于页都用它。
+   */
+  motto: '思',
+  mottoLatin: 'Think and feel the world',
+
+  /**
+   * 80–150 字摄影陈述。
+   * 现在留空 —— 等王宇本人提供真实文字再填，不要由他人代写。
+   * 留空时，首页的「摄影陈述」一节只呈现「思」与它的英文，页面依然完整。
+   */
+  statement: '',
+
   /** 关于页面的补充段落，可留空 */
   aboutExtra: '',
   /** 联系方式，留空则页脚不显示 */
   email: '',
+
   /** 网站描述，用于 SEO 与微信/短信分享预览 */
-  description: '【摄影师姓名】的个人摄影作品集 —— 一场可以随时打开的线上摄影展。',
+  description: '王宇（Yu Wang）个人摄影作品集 —— 思 · Think and feel the world。',
   /** 分享预览图（相对 public/ 的路径），建议用一张代表作 */
   ogImage: 'photos/share/og-cover.jpg',
   /** 摄影师人像（相对 public/ 的路径） */
   portrait: 'photos/portrait/portrait.jpg',
   /** 人像的 alt 文字 */
-  portraitAlt: '摄影师本人肖像',
+  portraitAlt: '摄影师王宇',
   /** 版权起始年份 */
   copyrightSince: 2026,
 } as const;

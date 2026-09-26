@@ -25,13 +25,14 @@
   --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui,
     -apple-system, sans-serif;
 
-  --page-x: clamp(1.25rem, 5vw, 5rem);
-  --rhythm: clamp(5rem, 12vh, 9rem);
-  --gutter: clamp(0.75rem, 1.6vw, 1.5rem);
-  --maxw: 1680px;
+  /* 留白是这个网站的材料之一：页边、段落之间、照片之间都刻意给得比常规更多 */
+  --page-x: clamp(1.5rem, 6.5vw, 7rem);
+  --rhythm: clamp(6rem, 16vh, 12rem);
+  --gutter: clamp(0.875rem, 1.8vw, 1.75rem);
+  --maxw: 1560px;
 
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --theme-duration: 700ms;
+  --ease: cubic-bezier(0.19, 0.72, 0.26, 1);
+  --theme-duration: 800ms;
 
   color-scheme: light;
 }
@@ -191,9 +192,9 @@ h3 {
   align-items: baseline;
   justify-content: space-between;
   gap: 2rem;
-  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
   border-bottom: 1px solid var(--line);
-  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  margin-bottom: clamp(3.5rem, 7vw, 6.5rem);
 }
 
 .rule {
@@ -265,7 +266,7 @@ h3 {
   width: 100%;
   height: 100%;
   object-fit: cover; /* 容器由 aspect-ratio 精确给出，等同于不裁剪 */
-  transition: transform 1200ms var(--ease), opacity 800ms var(--ease);
+  transition: transform 1600ms var(--ease), opacity 900ms var(--ease);
 }
 
 .frame img[data-loaded='false'] {
@@ -308,10 +309,10 @@ h3 {
    -------------------------------------------------------------------------- */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(22px);
   transition:
-    opacity 1100ms var(--ease),
-    transform 1100ms var(--ease);
+    opacity 1500ms var(--ease),
+    transform 1500ms var(--ease);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
@@ -323,7 +324,7 @@ h3 {
 /* 图片 clip reveal：从下往上揭开 */
 .clip-reveal .frame img {
   clip-path: inset(100% 0 0 0);
-  transition: clip-path 1400ms var(--ease), transform 1200ms var(--ease);
+  transition: clip-path 1800ms var(--ease), transform 1400ms var(--ease);
 }
 
 .clip-reveal.is-visible .frame img {
@@ -367,4 +368,51 @@ h3 {
    -------------------------------------------------------------------------- */
 [id] {
   scroll-margin-top: 6rem;
+}
+
+/* --------------------------------------------------------------------------
+   8. 印 —— 摄影理念「思 / Think and feel the world」
+   一个字加一行英文，像一方钤印。首页、摄影陈述、关于页共用同一套排法。
+   -------------------------------------------------------------------------- */
+.seal {
+  display: grid;
+  justify-items: start;
+  gap: clamp(0.85rem, 1.6vw, 1.35rem);
+  margin: 0;
+}
+
+.seal-mark {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  color: var(--text);
+}
+
+.seal-latin {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* 一道极细的短线，给「思」一点呼吸的边界，不是装饰 */
+.seal::before {
+  content: '';
+  width: clamp(2rem, 4vw, 3.5rem);
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.seal-lg .seal-mark {
+  font-size: clamp(3.75rem, 9vw, 8rem);
+}
+
+.seal-center {
+  justify-items: center;
+  text-align: center;
 }
