@@ -1,0 +1,69 @@
+# 把网站自动部署到 GitHub Pages。
+#
+#   push 到 main
+#        ↓
+#   安装依赖 → 构建静态网站
+#        ↓
+#   自动发布到 GitHub Pages
+#
+# 不需要任何 secret：Pages 部署用的是 GitHub 自带的临时令牌。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # 也可以在 GitHub 网页上手动点一下 Run workflow
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署；排队中的旧任务直接取消
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 准备 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 读取 Pages 配置（自动得到正确的网址和子路径）
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: 构建网站
+        run: npm run build
+        env:
+          # 用 GitHub 给出的真实地址，以后换成自定义域名也不用改代码
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          SITE_BASE: ${{ steps.pages.outputs.base_path }}
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
