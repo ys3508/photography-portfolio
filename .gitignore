@@ -1,0 +1,61 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+.astro/
+.output/
+.vercel/
+.netlify/
+
+# 环境变量 —— 绝对不要提交真实密钥
+.env
+.env.local
+.env.*
+!.env.example
+
+# macOS 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# 编辑器 / 本地个人配置
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# 日志与缓存
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.cache/
+.eslintcache
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 摄影原始文件绝不进仓库（只提交脚本生成的网站版本）
+*.ARW
+*.CR2
+*.CR3
+*.NEF
+*.RAF
+*.DNG
+*.ORF
+*.RW2
+*.heic
+*.HEIC
+*.tif
+*.TIF
+*.tiff
+*.TIFF
