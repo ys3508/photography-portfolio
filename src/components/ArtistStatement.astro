@@ -1,0 +1,41 @@
+---
+import { SITE } from '../config/site';
+---
+
+<section class="statement section" aria-labelledby="statement-title">
+  <div class="shell inner">
+    <p class="eyebrow reveal" id="statement-title">Artist Statement · 摄影陈述</p>
+    <blockquote class="text reveal" style="--reveal-delay: 120ms">
+      {SITE.statement}
+    </blockquote>
+    <p class="sign reveal" style="--reveal-delay: 240ms">— {SITE.photographerName}</p>
+  </div>
+</section>
+
+<style>
+  .statement {
+    border-top: 1px solid var(--line);
+  }
+
+  .inner {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    max-width: 62rem;
+  }
+
+  .text {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.375rem, 2.9vw, 2.125rem);
+    line-height: 1.6;
+    font-weight: 300;
+    text-indent: 0;
+  }
+
+  .sign {
+    margin: 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+  }
+</style>

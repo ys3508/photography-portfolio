@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/paths';
+---
+
+<BaseLayout title="找不到页面">
+  <section class="section">
+    <div class="shell center">
+      <p class="eyebrow">404</p>
+      <h1 class="section-title">这里没有照片</h1>
+      <p class="body-text">页面地址可能输错了，或者这张页面已经移走。</p>
+      <p><a class="link" href={withBase('')}>回到首页</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .center {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    padding-block: clamp(4rem, 14vh, 9rem);
+  }
+  .center p {
+    margin: 0;
+  }
+</style>

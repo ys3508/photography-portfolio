@@ -1,0 +1,351 @@
+---
+/**
+ * 首页第一屏 —— 摄影杂志封面 / 摄影展入口。
+ * 刻意不做 Hero Banner：没有按钮、没有 "Learn More"、没有大标语。
+ *
+ * 构图（原创）：
+ *   姓名作为刊头压在左上；右上角一张小作品先开口说话；
+ *   中间是代表作品，摄影师本人的肖像从左侧压在它的边缘上 ——
+ *   人和作品在同一个画面里，而不是分成两块。
+ * 所有图版都是「定高、宽度按真实比例自动算」，所以照片永不被裁切，
+ * 封面同时又能稳稳收在一屏之内。
+ */
+import { SITE } from '../config/site';
+import { withBase } from '../lib/paths';
+import { photos, featuredPhotos } from '../lib/gallery';
+
+const lead = featuredPhotos[0] ?? photos[0];
+const second = featuredPhotos[1] ?? photos[1];
+const total = photos.length;
+
+function describe(photo: (typeof photos)[number] | undefined, fallback: string) {
+  if (!photo) return fallback;
+  return [photo.title, photo.location, photo.year].filter(Boolean).join('，') || fallback;
+}
+---
+
+<section class="cover" aria-label="封面">
+  <div class="shell grid">
+    <div class="masthead">
+      <h1 class="display name">{SITE.photographerName}</h1>
+      {SITE.photographerNameLatin && <p class="latin">{SITE.photographerNameLatin}</p>}
+    </div>
+
+    {
+      second && (
+        <figure class="plate plate-second">
+          <span class="frame" style={`aspect-ratio: ${second.width} / ${second.height};`}>
+            <img
+              src={withBase(second.thumbnail)}
+              width={second.width}
+              height={second.height}
+              alt={describe(second, '摄影作品')}
+              sizes="20vw"
+              loading="eager"
+              decoding="async"
+              data-loaded="false"
+            />
+          </span>
+        </figure>
+      )
+    }
+
+    <div class="plates">
+      <figure class="plate plate-portrait">
+        <span class="frame portrait-frame">
+          <img
+            src={withBase(SITE.portrait)}
+            alt={SITE.portraitAlt}
+            sizes="(max-width: 860px) 45vw, 22vw"
+            loading="eager"
+            decoding="async"
+            data-loaded="false"
+          />
+        </span>
+        <figcaption class="meta portrait-caption">摄影师</figcaption>
+      </figure>
+
+      {
+        lead && (
+          <figure class="plate plate-lead">
+            <span class="frame" style={`aspect-ratio: ${lead.width} / ${lead.height};`}>
+              <img
+                src={withBase(lead.src)}
+                width={lead.width}
+                height={lead.height}
+                alt={describe(lead, '代表摄影作品')}
+                sizes="(max-width: 860px) 100vw, 62vw"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                data-loaded="false"
+              />
+            </span>
+          </figure>
+        )
+      }
+    </div>
+
+    <p class="tagline lede">{SITE.tagline}</p>
+
+    <div class="ledger">
+      <span class="meta">精品集</span>
+      <span class="meta">共 {total} 张</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true"><span></span></div>
+</section>
+
+<style>
+  .cover {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(5rem, 11vh, 7.5rem) clamp(3rem, 8vh, 5rem);
+    overflow: hidden;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gutter);
+    row-gap: clamp(0.75rem, 2.5vh, 2rem);
+    width: 100%;
+    align-items: end;
+  }
+
+  /* ---------- 刊头 ---------- */
+  .masthead {
+    grid-column: 1 / 10;
+    grid-row: 1;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .name {
+    margin: 0;
+    font-size: clamp(2.35rem, 7.2vw, 6.25rem);
+    letter-spacing: -0.012em;
+  }
+
+  .latin {
+    margin: 0.55rem 0 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ---------- 图版 ---------- */
+  .plate {
+    margin: 0;
+  }
+
+  .plate .frame {
+    cursor: default;
+  }
+
+  /* 右上角的小作品 */
+  .plate-second {
+    grid-column: 10 / 13;
+    grid-row: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .plate-second .frame {
+    height: clamp(5rem, 14svh, 9.5rem);
+    width: auto;
+    max-width: 100%;
+  }
+
+  /*
+    人像 + 代表作品放在同一个 flex 容器里，
+    人像用负的右外边距压在作品上 —— 不管照片是横是竖，重叠关系都成立。
+  */
+  .plates {
+    grid-column: 1 / 13;
+    grid-row: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .plate-portrait {
+    position: relative;
+    z-index: 2;
+    margin-right: clamp(-4.5rem, -5vw, -1.5rem);
+    margin-bottom: clamp(-3.5rem, -5vh, -1rem);
+    flex: 0 0 auto;
+  }
+
+  .portrait-frame {
+    display: block;
+    position: relative;
+    aspect-ratio: 4 / 5;
+    height: clamp(10.5rem, 32svh, 21rem);
+    width: auto;
+    overflow: hidden;
+    background: var(--photo-rest);
+  }
+
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .portrait-caption {
+    margin-top: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+  }
+
+  .plate-lead {
+    position: relative;
+    z-index: 1;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .plate-lead .frame {
+    height: clamp(16rem, 52svh, 36rem);
+    width: auto;
+    max-width: 100%;
+  }
+
+  /* ---------- 文字 ---------- */
+  .tagline {
+    grid-column: 1 / 10;
+    grid-row: 3;
+    margin: clamp(1.75rem, 5vh, 3.25rem) 0 0;
+    max-width: 24em;
+    color: var(--text);
+  }
+
+  .ledger {
+    grid-column: 10 / 13;
+    grid-row: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    text-align: right;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+  }
+
+  /* ---------- 滚动提示 ---------- */
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    width: 1px;
+    height: 3rem;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .scroll-cue span {
+    display: block;
+    width: 100%;
+    height: 40%;
+    background: var(--text-muted);
+    animation: cue 3.2s var(--ease) infinite;
+  }
+
+  @keyframes cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    60%,
+    100% {
+      transform: translateY(250%);
+    }
+  }
+
+  /* 矮屏幕：不再强求一屏收满，让内容自然展开 */
+  @media (max-height: 660px) {
+    .cover {
+      min-height: auto;
+    }
+  }
+
+  /* ---------- 平板 / 手机 ---------- */
+  @media (max-width: 860px) {
+    .cover {
+      min-height: auto;
+      padding-block: clamp(3.5rem, 11vh, 5.5rem) clamp(2.5rem, 7vh, 3.5rem);
+    }
+
+    .grid {
+      grid-template-columns: repeat(6, 1fr);
+      align-items: start;
+    }
+
+    .masthead {
+      grid-column: 1 / -1;
+    }
+
+    .plate-second {
+      display: none;
+    }
+
+    /* 手机上让 .plates 退出布局，人像和作品直接回到网格里，
+       这样摄影理念可以贴在人像右边，不浪费半屏空白。 */
+    .plates {
+      display: contents;
+    }
+
+    .plate-lead {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin-top: clamp(0.75rem, 3vw, 1.5rem);
+    }
+
+    .plate-lead .frame {
+      height: auto;
+      width: 100%;
+    }
+
+    .plate-portrait {
+      grid-column: 1 / 4;
+      grid-row: 3;
+      margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
+      align-self: start;
+    }
+
+    .portrait-frame {
+      height: auto;
+      width: 100%;
+    }
+
+    .tagline {
+      grid-column: 4 / -1;
+      grid-row: 3;
+      align-self: end;
+      font-size: clamp(1rem, 3.4vw, 1.25rem);
+      margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
+    }
+
+    .ledger {
+      grid-column: 1 / -1;
+      grid-row: 4;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .scroll-cue {
+      display: none;
+    }
+  }
+</style>

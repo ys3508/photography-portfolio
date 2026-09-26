@@ -1,0 +1,178 @@
+---
+/**
+ * 首页「精品集」——不是瀑布流，而是一本摄影书的内页编排。
+ * 节奏：超大横图 → 竖图 + 留白 → 宽幅 → 两张互相对话的小图。
+ * 完整的 masonry 照片墙在 /gallery 页面。
+ */
+import { featuredPhotos, indexOf } from '../lib/gallery';
+import PhotoFrame from './PhotoFrame.astro';
+
+const [one, two, three, four, five] = featuredPhotos;
+---
+
+<section class="featured section" id="featured" aria-labelledby="featured-title">
+  <div class="shell">
+    <header class="section-head">
+      <h2 class="section-title reveal" id="featured-title">精品集</h2>
+      <p class="meta reveal" style="--reveal-delay: 100ms">
+        由摄影师本人挑选 · {featuredPhotos.length} 张
+      </p>
+    </header>
+
+    <div class="spread">
+      {
+        one && (
+          <div class="slot slot-one reveal clip-reveal">
+            <PhotoFrame
+              photo={one}
+              index={indexOf(one)}
+              useFull
+              eager
+              sizes="(max-width: 860px) 100vw, 82vw"
+            />
+          </div>
+        )
+      }
+
+      {
+        two && (
+          <div class="slot slot-two reveal clip-reveal">
+            <PhotoFrame photo={two} index={indexOf(two)} sizes="(max-width: 860px) 70vw, 34vw" />
+          </div>
+        )
+      }
+
+      {
+        two && (
+          <p class="aside reveal" style="--reveal-delay: 160ms">
+            <span class="eyebrow">精品集</span>
+            <span class="aside-text">
+              这里的每一张，都是摄影师本人从自己的作品集中挑出来、认为应该正式展出的照片。
+            </span>
+          </p>
+        )
+      }
+
+      {
+        three && (
+          <div class="slot slot-three reveal clip-reveal">
+            <PhotoFrame
+              photo={three}
+              index={indexOf(three)}
+              useFull
+              sizes="(max-width: 860px) 100vw, 96vw"
+            />
+          </div>
+        )
+      }
+
+      {
+        four && (
+          <div class="slot slot-four reveal clip-reveal">
+            <PhotoFrame photo={four} index={indexOf(four)} sizes="(max-width: 860px) 46vw, 30vw" />
+          </div>
+        )
+      }
+
+      {
+        five && (
+          <div class="slot slot-five reveal clip-reveal" style="--reveal-delay: 140ms">
+            <PhotoFrame photo={five} index={indexOf(five)} sizes="(max-width: 860px) 46vw, 26vw" />
+          </div>
+        )
+      }
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .featured {
+    border-top: 1px solid var(--line);
+  }
+
+  .spread {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gutter);
+    row-gap: clamp(3rem, 9vw, 8rem);
+    align-items: end;
+  }
+
+  /* 01 超大横图，略微右偏，留出左侧空白 */
+  .slot-one {
+    grid-column: 3 / 13;
+  }
+
+  /* 02 较小的竖图，靠左；右侧是呼吸空间与一句说明 */
+  .slot-two {
+    grid-column: 2 / 6;
+  }
+
+  .aside {
+    grid-column: 8 / 12;
+    align-self: end;
+    display: grid;
+    gap: 0.9rem;
+    margin: 0 0 1rem;
+  }
+
+  .aside-text {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.75;
+    color: var(--text-muted);
+    max-width: 22em;
+  }
+
+  /* 03 宽幅，几乎满幅 */
+  .slot-three {
+    grid-column: 1 / 13;
+  }
+
+  /* 04 / 05 两张互相对话的小作品：一高一低 */
+  .slot-four {
+    grid-column: 2 / 7;
+  }
+
+  .slot-five {
+    grid-column: 8 / 12;
+    margin-bottom: clamp(3rem, 9vw, 7rem);
+  }
+
+  @media (max-width: 860px) {
+    .spread {
+      grid-template-columns: repeat(6, 1fr);
+      row-gap: clamp(2.25rem, 7vw, 3.5rem);
+    }
+
+    .slot-one,
+    .slot-three {
+      grid-column: 1 / -1;
+    }
+
+    .slot-two {
+      grid-column: 1 / 5;
+    }
+
+    .aside {
+      grid-column: 1 / -1;
+      margin-bottom: 0;
+    }
+
+    .aside-text {
+      max-width: none;
+    }
+
+    .slot-four {
+      grid-column: 1 / 4;
+    }
+
+    .slot-five {
+      grid-column: 4 / -1;
+      margin-bottom: 0;
+      align-self: start;
+      margin-top: clamp(1.5rem, 6vw, 3rem);
+    }
+  }
+</style>
