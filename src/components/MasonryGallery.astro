@@ -1,0 +1,71 @@
+---
+/**
+ * 完整摄影作品墙。
+ * 真正的 masonry：每张照片保持自己的原始比例，绝不统一裁成方块。
+ * 构建时就按「最矮的一列优先」把照片分好列（保持策展顺序），
+ * 浏览器端只在列数变化时重新分配，所以不会有布局跳动。
+ */
+import { distribute, type Photo } from '../lib/gallery';
+import PhotoFrame from './PhotoFrame.astro';
+
+interface Props {
+  items: Photo[];
+  /** 默认桌面列数 */
+  columns?: number;
+}
+
+const { items, columns = 3 } = Astro.props;
+const cols = distribute(items, columns);
+---
+
+<div class="masonry" data-masonry data-default-columns={columns}>
+  {
+    cols.map((column) => (
+      <div class="masonry-col">
+        {column.map((photo) => (
+          <div
+            class="masonry-item reveal clip-reveal"
+            data-index={photo.order - 1}
+            data-ratio={(photo.height / photo.width).toFixed(4)}
+          >
+            <PhotoFrame photo={photo} index={photo.order - 1} />
+          </div>
+        ))}
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .masonry {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 3rem);
+    align-items: start;
+  }
+
+  .masonry-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    min-width: 0;
+  }
+
+  .masonry-col:empty {
+    display: none;
+  }
+
+  @media (max-width: 1080px) {
+    .masonry {
+      --cols: 2;
+    }
+  }
+
+  /* 手机：单列。照片在小屏幕上需要足够的存在感，两列会把竖图压得太小。 */
+  @media (max-width: 640px) {
+    .masonry {
+      --cols: 1;
+      gap: clamp(2rem, 8vw, 2.75rem);
+    }
+  }
+</style>
