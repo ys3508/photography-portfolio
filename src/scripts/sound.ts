@@ -38,9 +38,10 @@ if (audio && button) {
   }
 
   function paint(on: boolean) {
+    const d = button!.dataset;
     button!.setAttribute('aria-pressed', on ? 'true' : 'false');
-    button!.setAttribute('aria-label', on ? '关闭背景音乐' : '播放背景音乐');
-    if (label) label.textContent = on ? '关闭音乐' : '开启音乐';
+    button!.setAttribute('aria-label', (on ? d.onAria : d.offAria) ?? '');
+    if (label) label.textContent = (on ? d.onLabel : d.offLabel) ?? '';
   }
 
   function fadeTo(target: number, done?: () => void) {

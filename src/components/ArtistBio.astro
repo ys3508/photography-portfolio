@@ -4,19 +4,22 @@
  * 首页的「关于摄影师」一节和 /about 页面共用这一块，
  * 文字只在 src/config/site.ts 的 STATEMENT 里写一次。
  */
-import { STATEMENT } from '../config/site';
+import { STATEMENT, STATEMENT_EN } from '../config/site';
 import { renderEmphasis } from '../lib/text';
+import { getLang } from '../lib/i18n';
+
+const text = getLang(Astro.url) === 'en' ? STATEMENT_EN : STATEMENT;
 ---
 
 <div class="bio">
-  <p class="lead reveal">{STATEMENT.lead}</p>
+  <p class="lead reveal">{text.lead}</p>
 
-  <p class="para reveal" style="--reveal-delay: 90ms" set:html={renderEmphasis(STATEMENT.opening)} />
+  <p class="para reveal" style="--reveal-delay: 90ms" set:html={renderEmphasis(text.opening)} />
 
-  <p class="creed reveal" style="--reveal-delay: 160ms">{STATEMENT.creed}</p>
+  <p class="creed reveal" style="--reveal-delay: 160ms">{text.creed}</p>
 
   {
-    STATEMENT.body.map((para, i) => (
+    text.body.map((para, i) => (
       <p class="para reveal" style={`--reveal-delay: ${220 + i * 70}ms`} set:html={renderEmphasis(para)} />
     ))
   }

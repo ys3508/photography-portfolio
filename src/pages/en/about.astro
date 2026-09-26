@@ -1,0 +1,127 @@
+---
+/*
+  英文版 —— 和中文版用的是同一批组件。
+  语言由 URL 里的 /en 决定（src/lib/i18n.ts 的 getLang），
+  所以这里不需要传任何参数，也不会有两套需要各自维护的代码。
+*/
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../config/site';
+import { withBase } from '../../lib/paths';
+import { localePath } from '../../lib/i18n';
+import MarbleGround from '../../components/MarbleGround.astro';
+import ArtistBio from '../../components/ArtistBio.astro';
+import { getLang, t } from '../../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
+---
+
+<BaseLayout title={ui.navAbout}>
+  <section class="section about-page">
+    <MarbleGround variant="statement" />
+
+    <div class="shell above-ground">
+      <header class="section-head">
+        <h1 class="section-title reveal">{ui.pageAboutTitle}</h1>
+      </header>
+
+      <div class="about-grid">
+        <figure class="portrait reveal clip-reveal">
+          <span class="frame portrait-frame">
+            <img
+              src={withBase(SITE.portrait)}
+              alt={lang === 'en' ? SITE.portraitAltEn : SITE.portraitAlt}
+              sizes="(max-width: 860px) 70vw, 32vw"
+              loading="eager"
+              decoding="async"
+              data-loaded="false"
+            />
+          </span>
+          <figcaption class="meta cap">
+            {lang === 'en' ? SITE.photographerNameLatin : `${SITE.photographerName}　${SITE.photographerNameLatin}`}
+          </figcaption>
+        </figure>
+
+        <div class="prose">
+          <figure class="seal seal-lg reveal">
+            <span class="seal-mark">{SITE.motto}</span>
+            <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
+          </figure>
+          <ArtistBio />
+          <p class="reveal" style="--reveal-delay: 280ms">
+            <a class="link" href={localePath(lang, 'gallery')}>{ui.moreCta}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-page {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 正文在左（干净的一侧），人像在右（朱染的深色一侧，照片不透明不受影响） */
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .portrait {
+    order: 2;
+    justify-self: end;
+  }
+
+  .prose {
+    order: 1;
+  }
+
+  .portrait {
+    margin: 0;
+    max-width: 30rem;
+  }
+
+  .portrait-frame {
+    display: block;
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--photo-rest);
+    cursor: default;
+  }
+
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cap {
+    margin-top: 0.9rem;
+    letter-spacing: 0.18em;
+  }
+
+  .prose {
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  .prose p {
+    margin: 0;
+  }
+
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .portrait {
+      order: 2;
+      max-width: 20rem;
+      justify-self: start;
+    }
+  }
+</style>

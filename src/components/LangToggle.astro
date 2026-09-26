@@ -1,0 +1,37 @@
+---
+/**
+ * 中 / EN 切换。
+ * 用文字而不是地球图标 —— 这个网站的一切都是排版做的，图标会显得吵。
+ * 按钮上显示的是「切过去之后的语言」。
+ */
+import { getLang, otherLangPath, t } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
+---
+
+<a class="lang" href={otherLangPath(lang, Astro.url)} aria-label={ui.langToggle} lang={lang === 'zh' ? 'en' : 'zh'}>
+  {ui.langLabel}
+</a>
+
+<style>
+  .lang {
+    display: grid;
+    place-items: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding-inline: 0.4rem;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: inherit;
+    opacity: 0.75;
+    transition: background-color 400ms var(--ease), opacity 400ms var(--ease);
+  }
+
+  .lang:hover {
+    opacity: 1;
+    background: var(--photo-rest);
+  }
+</style>

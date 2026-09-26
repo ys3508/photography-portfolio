@@ -48,8 +48,10 @@ if (dataNode && root) {
     image.classList.remove('is-ready');
     image.width = p.w;
     image.height = p.h;
+    const pattern = root!.dataset.altPattern ?? '{n}';
     image.alt =
-      [p.title, p.location, p.year].filter(Boolean).join('，') || `摄影作品 第 ${index + 1} 张`;
+      [p.title, p.location, p.year].filter(Boolean).join('，') ||
+      pattern.replace('{n}', String(index + 1));
 
     const next = new Image();
     next.onload = () => {

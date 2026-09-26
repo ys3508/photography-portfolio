@@ -2,17 +2,22 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
+import { localePath } from '../lib/i18n';
 import MarbleGround from '../components/MarbleGround.astro';
 import ArtistBio from '../components/ArtistBio.astro';
+import { getLang, t } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
 ---
 
-<BaseLayout title="关于" description={`关于摄影师 ${SITE.photographerName}`}>
+<BaseLayout title={ui.navAbout}>
   <section class="section about-page">
     <MarbleGround variant="statement" />
 
     <div class="shell above-ground">
       <header class="section-head">
-        <h1 class="section-title reveal">关于摄影师</h1>
+        <h1 class="section-title reveal">{ui.pageAboutTitle}</h1>
       </header>
 
       <div class="about-grid">
@@ -20,14 +25,16 @@ import ArtistBio from '../components/ArtistBio.astro';
           <span class="frame portrait-frame">
             <img
               src={withBase(SITE.portrait)}
-              alt={SITE.portraitAlt}
+              alt={lang === 'en' ? SITE.portraitAltEn : SITE.portraitAlt}
               sizes="(max-width: 860px) 70vw, 32vw"
               loading="eager"
               decoding="async"
               data-loaded="false"
             />
           </span>
-          <figcaption class="meta cap">{SITE.photographerName}　{SITE.photographerNameLatin}</figcaption>
+          <figcaption class="meta cap">
+            {lang === 'en' ? SITE.photographerNameLatin : `${SITE.photographerName}　${SITE.photographerNameLatin}`}
+          </figcaption>
         </figure>
 
         <div class="prose">
@@ -37,7 +44,7 @@ import ArtistBio from '../components/ArtistBio.astro';
           </figure>
           <ArtistBio />
           <p class="reveal" style="--reveal-delay: 280ms">
-            <a class="link" href={withBase('gallery')}>查看全部作品</a>
+            <a class="link" href={localePath(lang, 'gallery')}>{ui.moreCta}</a>
           </p>
         </div>
       </div>

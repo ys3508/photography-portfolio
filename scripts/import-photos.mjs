@@ -1,23 +1,29 @@
 #!/usr/bin/env node
 /**
- * 从 iCloud「精品集」导入照片 → 生成网站用的图片副本 + gallery.json
+ * 从 iCloud 导入照片 → 生成网站用的图片副本 + gallery.json
  *
- *   iCloud 精品集（原图，只读）
+ * 读两个文件夹：
+ *
+ *   叔叔摄影作品集/网站照片   →  首页展示的那几张（封面 + 精品集那一节）
+ *   叔叔摄影作品集/作品集     →  完整摄影作品墙 /gallery
+ *
+ * 两边的照片都会进作品墙；来自「网站照片」的额外标成 featured，上首页。
+ * 同一张照片两边都有时，按**文件内容**去重（改名、复制一份都骗不过去），只算一张。
+ *
  *        ↓  读取
- *   public/photos/full/*.webp     网站大图   长边 ~2200px
- *   public/photos/thumbs/*.webp   缩略图     长边 ~900px
- *   public/photos/thumbs/*.avif   缩略图     更小体积，现代浏览器优先
+ *   public/photos/full/*.webp     网站大图   长边最多 2400px
+ *   public/photos/thumbs/*.webp   缩略图     长边最多 1200px
+ *   public/photos/thumbs/*.avif   缩略图     体积更小，现代浏览器优先
  *        ↓
  *   src/data/gallery.json         网站读取的照片数据
  *
  * ★ 安全承诺 ★
  *   本脚本对 iCloud 原图只有「读」这一个动作。
  *   全文没有任何 删除 / 移动 / 改名 / 覆盖 / 写入 原目录的代码。
- *   所有网站图片都是全新生成的副本，写在本项目的 public/photos/ 下。
+ *   只缩小、永不放大：原图小于上限时保持原分辨率，不做任何插值。
  *
  * 用法：
  *   npm run import:photos
- *   PHOTOS_SOURCE_DIR="/别的路径" npm run import:photos
  */
 
 import fs from 'node:fs/promises';
@@ -41,30 +47,20 @@ const ICLOUD_BASE = path.join(
   'Library/Mobile Documents/com~apple~CloudDocs/叔叔摄影作品集',
 );
 
-/*
-  网站读取哪个文件夹。
-  目前是「网站照片」—— 王宇挑定、确认要放上网站的那一组。
-  「精品集」留作他平时挑选的中转站；如果以后决定直接用「精品集」，
-  把下面这一行改成 '精品集' 即可（同时记得改 iCloud 里的 说明书.txt）。
-*/
-const SOURCE_FOLDER = '网站照片';
-const OTHER_FOLDER = '精品集';
-
-const DEFAULT_SOURCE = path.join(ICLOUD_BASE, SOURCE_FOLDER);
-const SOURCE_DIR = process.env.PHOTOS_SOURCE_DIR?.trim() || DEFAULT_SOURCE;
+/** 顺序有意义：排在前面的文件夹优先决定一张照片的归属 */
+const SOURCES = [
+  { folder: '网站照片', featured: true, note: '首页展示' },
+  { folder: '作品集', featured: false, note: '完整作品墙' },
+];
 
 const OUT_FULL = path.join(PROJECT, 'public/photos/full');
 const OUT_THUMB = path.join(PROJECT, 'public/photos/thumbs');
 const GALLERY_JSON = path.join(PROJECT, 'src/data/gallery.json');
 const META_JSON = path.join(PROJECT, 'content/photo-meta.json');
 
-/*
-  只缩小、永不放大（sharp 的 withoutEnlargement）。
-  原图如果本来就小于这些尺寸，就原样保留 —— 不会为了"统一"去插值放大，
-  也不会把一张 768×1024 的照片缩成 675×900。
-*/
-const FULL_EDGE = 2400; // 全屏浏览用
-const THUMB_EDGE = 1200; // 照片墙用（留足 2 倍屏的余量）
+/* 只缩小、永不放大 */
+const FULL_EDGE = 2400;
+const THUMB_EDGE = 1200;
 const FULL_QUALITY = 94;
 const THUMB_QUALITY = 88;
 const AVIF_QUALITY = 68;
@@ -78,18 +74,17 @@ const SUPPORTED = new Set([
 
 const log = (...a) => console.log(...a);
 
+/** 文件内容的指纹 —— 用它去重和做 id，改名、复制一份都骗不过去 */
+const contentId = (buffer) => crypto.createHash('sha1').update(buffer).digest('hex').slice(0, 10);
+
 function slugify(name, fallbackId) {
   const base = path
     .basename(name, path.extname(name))
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-+|-+$/g, '');
-  const ascii = base.replace(/[^a-z0-9-]/g, '');
-  return ascii.length >= 3 ? ascii.slice(0, 48) : `photo-${fallbackId}`;
-}
-
-function idFor(filename) {
-  return crypto.createHash('sha1').update(filename).digest('hex').slice(0, 8);
+  const ascii = base.replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
+  return ascii.length >= 3 ? `${ascii.slice(0, 40)}-${fallbackId}` : `photo-${fallbackId}`;
 }
 
 async function readJson(file, fallback) {
@@ -102,20 +97,17 @@ async function readJson(file, fallback) {
 
 /**
  * 读取原图。只读，绝不写回原目录。
- * iCloud 上没下载到本地的文件会先触发下载；HEIC 等 sharp 解不了的格式
- * 走 macOS 自带的 sips 转成临时 TIFF（临时文件写在系统临时目录，不动原图）。
+ * HEIC 等 sharp 解不了的格式走 macOS 自带的 sips 转成临时 TIFF
+ * （临时文件写在系统临时目录，用完即删，不动原图）。
  */
-async function loadImage(sourceFile) {
-  const buffer = await fs.readFile(sourceFile); // ← 唯一接触原图的操作
+async function loadImage(sourceFile, buffer) {
   try {
     const pipeline = sharp(buffer, { failOn: 'none' });
     await pipeline.metadata();
     return { pipeline, temp: null };
   } catch {
-    const temp = path.join(
-      await fs.mkdtemp(path.join(os.tmpdir(), 'photo-import-')),
-      'converted.tiff',
-    );
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'photo-import-'));
+    const temp = path.join(dir, 'converted.tiff');
     await execFileAsync('sips', ['-s', 'format', 'tiff', sourceFile, '--out', temp]);
     return { pipeline: sharp(temp, { failOn: 'none' }), temp };
   }
@@ -139,54 +131,62 @@ async function exifYear(sourceFile) {
 async function main() {
   log('\n照片导入');
   log('────────────────────────────────────────');
-  log(`来源（只读）: ${SOURCE_DIR}`);
-  log(`输出        : public/photos/\n`);
-
-  // 另一个文件夹里如果也有照片，提醒一声，免得有人以为它们会自动上网站
-  if (!process.env.PHOTOS_SOURCE_DIR) {
-    const other = path.join(ICLOUD_BASE, OTHER_FOLDER);
-    try {
-      const n = (await fs.readdir(other))
-        .filter((f) => !f.startsWith('.') && SUPPORTED.has(path.extname(f).toLowerCase()))
-        .length;
-      if (n > 0) {
-        log(`⚠  提醒：「${OTHER_FOLDER}」里还有 ${n} 张照片，本次不会用到。`);
-        log(`   网站只读取「${SOURCE_FOLDER}」。要换文件夹请改 scripts/import-photos.mjs 顶部的 SOURCE_FOLDER。\n`);
-      }
-    } catch {
-      /* 另一个文件夹不存在也无所谓 */
+  for (const src of SOURCES) {
+    const dir = path.join(ICLOUD_BASE, src.folder);
+    if (!fsSync.existsSync(dir)) {
+      console.error(`✗ 找不到文件夹：\n  ${dir}\n`);
+      process.exit(1);
     }
+    log(`来源（只读）: ${src.folder.padEnd(6, '　')} → ${src.note}`);
   }
-
-  if (path.resolve(SOURCE_DIR).startsWith(path.resolve(PROJECT) + path.sep)) {
-    console.error('✗ 来源目录不能在项目内部，退出。');
-    process.exit(1);
-  }
-
-  if (!fsSync.existsSync(SOURCE_DIR)) {
-    console.error(`✗ 找不到来源文件夹：\n  ${SOURCE_DIR}\n`);
-    console.error('  请确认 iCloud 云盘 → 叔叔摄影作品集 → 精品集 存在，');
-    console.error('  或用 PHOTOS_SOURCE_DIR 指定其它路径。');
-    process.exit(1);
-  }
-
-  const entries = (await fs.readdir(SOURCE_DIR, { withFileTypes: true }))
-    .filter((e) => e.isFile() && !e.name.startsWith('.'))
-    .map((e) => e.name)
-    .filter((name) => SUPPORTED.has(path.extname(name).toLowerCase()))
-    .sort((a, b) => a.localeCompare(b, 'zh-CN'));
-
-  if (entries.length === 0) {
-    log('精品集里还没有照片。');
-    log('把叔叔挑好的照片放进 iCloud 云盘 → 叔叔摄影作品集 → 精品集，再运行一次。\n');
-    log('（本次没有改动任何文件，网站会继续使用现有的 gallery.json。）\n');
-    return;
-  }
+  log(`输出        : public/photos/\n`);
 
   await fs.mkdir(OUT_FULL, { recursive: true });
   await fs.mkdir(OUT_THUMB, { recursive: true });
   await fs.mkdir(path.dirname(META_JSON), { recursive: true });
 
+  /* ---- 合并两个文件夹，按文件内容去重 ---- */
+  const byContent = new Map();
+  let seen = 0;
+
+  for (const src of SOURCES) {
+    const dir = path.join(ICLOUD_BASE, src.folder);
+    const names = (await fs.readdir(dir, { withFileTypes: true }))
+      .filter((e) => e.isFile() && !e.name.startsWith('.'))
+      .map((e) => e.name)
+      .filter((name) => SUPPORTED.has(path.extname(name).toLowerCase()))
+      .sort((a, b) => a.localeCompare(b, 'zh-CN'));
+
+    for (const filename of names) {
+      seen += 1;
+      const file = path.join(dir, filename);
+      const buffer = await fs.readFile(file); // ← 唯一接触原图的操作
+      const id = contentId(buffer);
+      const existing = byContent.get(id);
+      if (existing) {
+        // 同一张照片又出现了一次：只把「上首页」这个属性合并进去，不重复收录
+        if (src.featured) existing.featured = true;
+        continue;
+      }
+      byContent.set(id, {
+        id,
+        file,
+        filename,
+        folder: src.folder,
+        featured: src.featured,
+        stat: await fs.stat(file),
+      });
+    }
+  }
+
+  const items = [...byContent.values()];
+  if (items.length === 0) {
+    log('两个文件夹里都还没有照片。本次没有改动任何文件。\n');
+    return;
+  }
+  if (seen > items.length) log(`（跳过 ${seen - items.length} 张重复照片 —— 按文件内容判断）\n`);
+
+  /* ---- 逐张生成网站版本 ---- */
   const previous = await readJson(GALLERY_JSON, []);
   const prevById = new Map(previous.map((p) => [p.id, p]));
   const meta = await readJson(META_JSON, {});
@@ -194,12 +194,9 @@ async function main() {
   const collected = [];
   const keepFiles = new Set();
 
-  for (const filename of entries) {
-    const sourceFile = path.join(SOURCE_DIR, filename);
-    const stat = await fs.stat(sourceFile);
-    const id = idFor(filename);
-    const slug = `${slugify(filename, id)}-${id}`;
-
+  for (const item of items) {
+    const { id, file, filename, stat } = item;
+    const slug = slugify(filename, id);
     const fullRel = `photos/full/${slug}.webp`;
     const thumbRel = `photos/thumbs/${slug}.webp`;
     const thumbAvifRel = `photos/thumbs/${slug}.avif`;
@@ -210,9 +207,9 @@ async function main() {
     const unchanged =
       prev &&
       prev.sourceSize === stat.size &&
-      prev.sourceMtime === Math.floor(stat.mtimeMs) &&
       fsSync.existsSync(path.join(PROJECT, 'public', fullRel)) &&
-      fsSync.existsSync(path.join(PROJECT, 'public', thumbRel));
+      fsSync.existsSync(path.join(PROJECT, 'public', thumbRel)) &&
+      fsSync.existsSync(path.join(PROJECT, 'public', thumbAvifRel));
 
     let width = prev?.width ?? 0;
     let height = prev?.height ?? 0;
@@ -220,43 +217,42 @@ async function main() {
     let taken = prev?.taken ?? null;
 
     if (unchanged) {
-      log(`·  跳过（无变化） ${filename}`);
+      log(`·  跳过（无变化） ${item.folder}/${filename}`);
     } else {
-      log(`→  处理 ${filename}`);
-      const { pipeline, temp } = await loadImage(sourceFile);
+      log(`→  处理 ${item.folder}/${filename}`);
+      const buffer = await fs.readFile(file);
+      const { pipeline, temp } = await loadImage(file, buffer);
       try {
         const info = await pipeline.metadata();
-        // EXIF 里带旋转信息时，实际显示的宽高要交换
+        // EXIF 带旋转信息时，实际显示的宽高要交换
         const rotated = (info.orientation ?? 1) >= 5;
         const srcW = rotated ? info.height : info.width;
         const srcH = rotated ? info.width : info.height;
 
-        const fullScale = Math.min(1, FULL_EDGE / Math.max(srcW, srcH));
-        width = Math.round(srcW * fullScale);
-        height = Math.round(srcH * fullScale);
+        const scale = Math.min(1, FULL_EDGE / Math.max(srcW, srcH));
+        width = Math.round(srcW * scale);
+        height = Math.round(srcH * scale);
 
-        await pipeline
-          .clone()
-          .rotate()
-          .resize({ width, height, fit: 'inside', withoutEnlargement: true })
+        const resize = (edge) => ({
+          width: edge,
+          height: edge,
+          fit: 'inside',
+          withoutEnlargement: true,
+        });
+
+        await pipeline.clone().rotate().resize(resize(FULL_EDGE))
           .webp({ quality: FULL_QUALITY, effort: 5 })
           .toFile(path.join(PROJECT, 'public', fullRel));
 
-        await pipeline
-          .clone()
-          .rotate()
-          .resize({ width: THUMB_EDGE, height: THUMB_EDGE, fit: 'inside', withoutEnlargement: true })
+        await pipeline.clone().rotate().resize(resize(THUMB_EDGE))
           .webp({ quality: THUMB_QUALITY, effort: 5 })
           .toFile(path.join(PROJECT, 'public', thumbRel));
 
-        await pipeline
-          .clone()
-          .rotate()
-          .resize({ width: THUMB_EDGE, height: THUMB_EDGE, fit: 'inside', withoutEnlargement: true })
+        await pipeline.clone().rotate().resize(resize(THUMB_EDGE))
           .avif({ quality: AVIF_QUALITY, effort: 4 })
           .toFile(path.join(PROJECT, 'public', thumbAvifRel));
 
-        const e = await exifYear(sourceFile);
+        const e = await exifYear(file);
         year = e.year;
         taken = e.taken;
       } finally {
@@ -264,16 +260,17 @@ async function main() {
       }
     }
 
-    // 叔叔填写的信息（标题 / 地点 / 说明 / 精品 / 顺序）永远以 content/photo-meta.json 为准。
-    // 没有填的就留空 —— 不自动编造。
-    const m = meta[filename] ?? {};
+    // 标题 / 地点 / 说明 / 顺序以 content/photo-meta.json 为准。
+    // 没填的就留空 —— 不自动编造。
     if (!meta[filename]) {
-      meta[filename] = { title: '', year: '', location: '', caption: '', featured: false, order: null };
+      meta[filename] = { title: '', year: '', location: '', caption: '', order: null };
     }
+    const m = meta[filename];
 
     collected.push({
       id,
       filename,
+      folder: item.folder,
       src: fullRel,
       thumbnail: thumbRel,
       thumbnailAvif: thumbAvifRel,
@@ -284,20 +281,21 @@ async function main() {
       year: m.year || year,
       location: m.location ?? '',
       caption: m.caption ?? '',
-      featured: m.featured === true,
+      // 首页展示与否由文件夹决定；photo-meta 里显式写 featured 可以覆盖
+      featured: typeof m.featured === 'boolean' ? m.featured : item.featured,
       order: 0,
       sourceSize: stat.size,
-      sourceMtime: Math.floor(stat.mtimeMs),
       taken,
       manualOrder: typeof m.order === 'number' ? m.order : null,
     });
   }
 
-  /* 排序：手动 order 优先 → 拍摄时间新在前 → 文件名 */
+  /* 排序：手动 order 优先 → 首页那几张在前 → 拍摄时间新在前 → 文件名 */
   collected.sort((a, b) => {
     if (a.manualOrder !== null && b.manualOrder !== null) return a.manualOrder - b.manualOrder;
     if (a.manualOrder !== null) return -1;
     if (b.manualOrder !== null) return 1;
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
     if (a.taken && b.taken && a.taken !== b.taken) return b.taken - a.taken;
     return a.filename.localeCompare(b.filename, 'zh-CN');
   });
@@ -306,17 +304,6 @@ async function main() {
     delete p.manualOrder;
     delete p.taken;
   });
-
-  /* 首页精品集：叔叔在 photo-meta.json 里标了 featured 就用他标的；
-     一个都没标时，暂时用排在最前面的 5 张占位，等叔叔决定。 */
-  if (!collected.some((p) => p.featured)) {
-    collected.slice(0, 5).forEach((p) => {
-      p.featured = true;
-    });
-    log('\n提示：photo-meta.json 里还没有标记 featured，');
-    log('     首页精品集暂时使用排在最前的 5 张。');
-    log('     请叔叔确认后，在 content/photo-meta.json 里把想上首页的照片设为 "featured": true。');
-  }
 
   /* 清理项目里已经没有对应原图的旧副本（只动 public/photos，不动 iCloud） */
   let removed = 0;
@@ -333,15 +320,15 @@ async function main() {
   await fs.writeFile(GALLERY_JSON, `${JSON.stringify(collected, null, 2)}\n`, 'utf8');
   await fs.writeFile(META_JSON, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
 
+  const featured = collected.filter((p) => p.featured).length;
   log('\n────────────────────────────────────────');
-  log(`完成：${collected.length} 张照片`);
-  log(`首页精品集：${collected.filter((p) => p.featured).length} 张`);
+  log(`完整作品墙：${collected.length} 张`);
+  log(`首页展示  ：${featured} 张（来自「网站照片」）`);
   if (removed) log(`清理了 ${removed} 个不再需要的网站图片副本`);
   log('iCloud 原图未被修改。\n');
   log('接下来：');
   log('  npm run dev      本地预览');
-  log('  git add -A && git commit -m "Update photo set" && git push');
-  log('');
+  log('  git add -A && git commit -m "Update photo set" && git push\n');
 }
 
 main().catch((err) => {

@@ -3,12 +3,16 @@
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
 import ArtistBio from './ArtistBio.astro';
+import { getLang, t } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
 ---
 
 <section class="about section" aria-labelledby="about-title">
   <div class="shell inner">
     <div class="text">
-      <p class="eyebrow reveal" id="about-title">关于摄影师</p>
+      <p class="eyebrow reveal" id="about-title">{ui.aboutEyebrow}</p>
       <ArtistBio />
     </div>
 
@@ -16,7 +20,7 @@ import ArtistBio from './ArtistBio.astro';
       <span class="frame portrait-frame">
         <img
           src={withBase(SITE.portrait)}
-          alt={SITE.portraitAlt}
+          alt={lang === 'en' ? SITE.portraitAltEn : SITE.portraitAlt}
           sizes="(max-width: 860px) 60vw, 28vw"
           loading="lazy"
           decoding="async"

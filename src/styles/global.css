@@ -482,9 +482,9 @@ h3 {
 
 .seal-latin {
   font-family: var(--font-sans);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 300;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--text-muted);
   line-height: 1.6;

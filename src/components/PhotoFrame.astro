@@ -1,6 +1,7 @@
 ---
 import type { Photo } from '../lib/gallery';
 import { withBase } from '../lib/paths';
+import { getLang, t } from '../lib/i18n';
 
 interface Props {
   photo: Photo;
@@ -25,8 +26,9 @@ const {
 const imgSrc = withBase(useFull ? photo.src : photo.thumbnail);
 const avifSrc = useFull ? undefined : photo.thumbnailAvif;
 
+const ui = t(getLang(Astro.url));
 const label = [photo.title, photo.location, photo.year].filter(Boolean).join('，');
-const alt = label || `摄影作品 第 ${index + 1} 张`;
+const alt = label || ui.photoAlt(index + 1);
 ---
 
 <button
@@ -34,7 +36,7 @@ const alt = label || `摄影作品 第 ${index + 1} 张`;
   style={`aspect-ratio: ${photo.width} / ${photo.height};`}
   data-lightbox-open
   data-index={index}
-  aria-label={`放大查看：${alt}`}
+  aria-label={`${ui.zoomPrefix}${alt}`}
 >
   <picture>
     {avifSrc && <source type="image/avif" srcset={withBase(avifSrc)} sizes={sizes} />}

@@ -101,7 +101,7 @@ async function main() {
   }
 
   // 摄影师人像占位
-  await plate(1200, 1500, '#494640', '摄影师人像')
+  await plate(1200, 1500, '#494640', 'PORTRAIT')
     .jpeg({ quality: 86 })
     .toFile(path.join(OUT_PORTRAIT, 'portrait.jpg'));
 

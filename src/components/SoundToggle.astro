@@ -9,6 +9,9 @@
  */
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
+import { getLang, t } from '../lib/i18n';
+
+const ui = t(getLang(Astro.url));
 
 const enabled = SITE.audio.trim().length > 0;
 ---
@@ -30,11 +33,13 @@ const enabled = SITE.audio.trim().length > 0;
         data-sound-toggle
         type="button"
         aria-pressed="false"
-        aria-label="播放背景音乐"
+        aria-label={ui.soundPlay}
+        data-on-label={ui.soundOff}
+        data-off-label={ui.soundOn}
+        data-on-aria={ui.soundStop}
+        data-off-aria={ui.soundPlay}
       >
-        <span class="label" data-sound-label aria-hidden="true">
-          开启音乐
-        </span>
+        <span class="label" data-sound-label aria-hidden="true">{ui.soundOn}</span>
         <span class="eye">
           <img src={withBase('texture/marble-mark.webp')} alt="" width="320" height="320" />
           <span class="ring" aria-hidden="true" />

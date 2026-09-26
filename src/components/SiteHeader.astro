@@ -1,7 +1,17 @@
 ---
-import { SITE, NAV } from '../config/site';
-import { withBase } from '../lib/paths';
+import { SITE } from '../config/site';
+import { getLang, localePath, t } from '../lib/i18n';
 import ThemeToggle from './ThemeToggle.astro';
+import LangToggle from './LangToggle.astro';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
+
+const NAV = [
+  { label: ui.navWorks, href: 'gallery' },
+  { label: ui.navSelected, href: '#featured' },
+  { label: ui.navAbout, href: 'about' },
+];
 
 interface Props {
   overlay?: boolean;
@@ -17,20 +27,23 @@ function isActive(href: string) {
 
 <header class:list={['site-header', overlay && 'is-overlay']} data-site-header>
   <div class="bar shell">
-    <a class="brand" href={withBase('')}>{SITE.photographerName}</a>
+    <a class="brand" href={localePath(lang)}>
+      {lang === 'en' ? SITE.photographerNameLatin : SITE.photographerName}
+    </a>
 
     <nav class="nav" aria-label="主导航">
       {
         NAV.map((item) => (
           <a
             class:list={['nav-link', isActive(item.href) && 'is-active']}
-            href={item.href.startsWith('#') ? withBase('') + item.href : withBase(item.href)}
+            href={item.href.startsWith('#') ? localePath(lang) + item.href : localePath(lang, item.href)}
             aria-current={isActive(item.href) ? 'page' : undefined}
           >
             {item.label}
           </a>
         ))
       }
+      <LangToggle />
       <ThemeToggle />
     </nav>
   </div>
@@ -140,8 +153,13 @@ function isActive(href: string) {
       color: #f4f2ec;
     }
 
-    .site-header.is-overlay:not(.is-stuck) :global(.theme-toggle) {
+    .site-header.is-overlay:not(.is-stuck) :global(.theme-toggle),
+    .site-header.is-overlay:not(.is-stuck) :global(.lang) {
       color: rgba(244, 242, 236, 0.85);
+    }
+
+    .site-header.is-overlay:not(.is-stuck) :global(.lang:hover) {
+      color: #f4f2ec;
     }
   }
 

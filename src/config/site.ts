@@ -25,12 +25,15 @@ export const SITE = {
 
   /** 网站描述，用于 SEO 与微信/短信分享预览 */
   description: '王宇（Yu Wang）个人摄影作品集 —— 思 · Think and feel the world。观看，是为了看见自己。',
+  descriptionEn:
+    'Photographs by Yu Wang — 思 · Think and feel the world. To observe is to encounter oneself.',
   /** 分享预览图（相对 public/ 的路径），建议用一张代表作 */
   ogImage: 'photos/share/og-cover.jpg',
   /** 摄影师人像（相对 public/ 的路径） */
   portrait: 'photos/portrait/portrait.jpg',
   /** 人像的 alt 文字 */
   portraitAlt: '摄影师王宇',
+  portraitAltEn: 'Portrait of Yu Wang',
   /** 版权起始年份 */
   copyrightSince: 2026,
 
@@ -68,6 +71,22 @@ export const STATEMENT = {
   ],
 } as const;
 
+/** 英文版的同一段文字。翻译求优雅简洁，和中文保持同一种气质。 */
+export const STATEMENT_EN = {
+  lead: 'Yu Wang — conceptual photographer, visual thinker.',
+
+  opening:
+    'For him, photography is not only a record but **a way of understanding the world**. What holds his attention is not only what happens in front of the lens, but **the act of looking itself** — how we see others, how we are seen, and how, in looking at the world, we come to know ourselves again.',
+
+  creed: 'To observe is to encounter oneself.',
+
+  body: [
+    'He has travelled across Asia, Europe, the Middle East and North America, photographing **the true moments** that are easily overlooked. People, streets, nature, architecture, those at the margins, and art alongside everyday life — each is a way into the world, and a way of understanding it.',
+    'His work turns on **truth**, **the relation between a person and the world**, **the resonance between a person and love**, **seeing and being seen**, and the discovery, understanding and reconsideration of history.',
+    'His images are warm and restrained, attentive to **what is true**, to **the sense of a story**, and to **human warmth** — and they try to keep, within ordinary experience, a deeper layer of philosophical thought.',
+  ],
+} as const;
+
 /**
  * 白天 / 夜晚模式的时间分界（访问者本地时间，24 小时制）。
  * DAY_START <= 当前小时 < DAY_END  →  白天模式
@@ -78,17 +97,11 @@ export const STATEMENT = {
 export const DAY_START = 7;
 export const DAY_END = 19;
 
-/** 导航（最多四项） */
-export const NAV = [
-  { label: '作品', href: 'gallery' },
-  { label: '精品', href: '#featured' },
-  { label: '关于', href: 'about' },
-] as const;
-
 /**
  * 首页一共用掉几张「精品」。
  * 其中前 HERO_PHOTO_COUNT 张给封面，剩下的给「精品集」那一节 ——
  * 同一张照片不会在首页出现两次。
  */
-export const FEATURED_LIMIT = 7;
-export const HERO_PHOTO_COUNT = 2;
+export const FEATURED_LIMIT = 8;
+/** 封面只放一张代表作品 —— 其余的留给「精品集」那一节 */
+export const HERO_PHOTO_COUNT = 1;

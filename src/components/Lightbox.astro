@@ -6,6 +6,9 @@
  */
 import { photos } from '../lib/gallery';
 import { withBase } from '../lib/paths';
+import { getLang, t } from '../lib/i18n';
+
+const ui = t(getLang(Astro.url));
 
 const payload = photos.map((p) => ({
   src: withBase(p.src),
@@ -21,15 +24,15 @@ const payload = photos.map((p) => ({
 
 <script type="application/json" id="gallery-data" set:html={JSON.stringify(payload)} />
 
-<div class="lightbox" data-lightbox hidden role="dialog" aria-modal="true" aria-label="照片全屏浏览">
-  <button class="close" data-lightbox-close type="button" aria-label="关闭 (ESC)">
+<div class="lightbox" data-lightbox data-alt-pattern={ui.photoAlt(0).replace('0', '{n}')} hidden role="dialog" aria-modal="true" aria-label={ui.lightbox}>
+  <button class="close" data-lightbox-close type="button" aria-label={ui.lbClose}>
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"
       ><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.1" fill="none"
       ></path></svg
     >
   </button>
 
-  <button class="nav prev" data-lightbox-prev type="button" aria-label="上一张 (←)">
+  <button class="nav prev" data-lightbox-prev type="button" aria-label={ui.lbPrev}>
     <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"
       ><path d="M15 4L7 12l8 8" stroke="currentColor" stroke-width="1.1" fill="none"></path></svg
     >
@@ -40,7 +43,7 @@ const payload = photos.map((p) => ({
     <figcaption class="caption" data-lightbox-caption></figcaption>
   </figure>
 
-  <button class="nav next" data-lightbox-next type="button" aria-label="下一张 (→)">
+  <button class="nav next" data-lightbox-next type="button" aria-label={ui.lbNext}>
     <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"
       ><path d="M9 4l8 8-8 8" stroke="currentColor" stroke-width="1.1" fill="none"></path></svg
     >

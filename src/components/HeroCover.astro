@@ -3,25 +3,28 @@
  * 首页第一屏 —— 摄影杂志封面 / 摄影展入口。
  * 刻意不做 Hero Banner：没有按钮、没有 "Learn More"、没有大标语。
  *
- * 构图（原创）：
- *   姓名作为刊头压在左上；右上角一张小作品先开口说话；
- *   中间是代表作品，摄影师本人的肖像从左侧压在它的边缘上 ——
- *   人和作品在同一个画面里，而不是分成两块。
- * 所有图版都是「定高、宽度按真实比例自动算」，所以照片永不被裁切，
+ * 构图（原创）：左上是姓名，右侧一张代表作品，左下是那方印。
+ * 中间大片留白，左缘透出大理石的肌理，右缘染着朱红。
+ * 图版「定高、宽度按真实比例自动算」，所以照片永不被裁切，
  * 封面同时又能稳稳收在一屏之内。
  */
 import { SITE } from '../config/site';
 import { withBase } from '../lib/paths';
 import { photos, heroPhotos, indexOf } from '../lib/gallery';
 import MarbleGround from './MarbleGround.astro';
+import { getLang, t } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
 
 const lead = heroPhotos[0] ?? photos[0];
-const second = heroPhotos[1] ?? photos[1];
 
-function describe(photo: (typeof photos)[number] | undefined, fallback: string) {
+function describe(photo: typeof lead, fallback: string) {
   if (!photo) return fallback;
   return [photo.title, photo.location, photo.year].filter(Boolean).join('，') || fallback;
 }
+
+const leadAlt = describe(lead, ui.leadAlt);
 ---
 
 <section class="cover" aria-label="封面">
@@ -29,27 +32,28 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
 
   <div class="shell grid above-ground">
     <div class="masthead">
-      <h1 class="display name">{SITE.photographerName}</h1>
-      {SITE.photographerNameLatin && <p class="latin">{SITE.photographerNameLatin}</p>}
+      <h1 class="display name">{lang === 'en' ? SITE.photographerNameLatin : SITE.photographerName}</h1>
+      <p class="latin">{lang === 'en' ? SITE.photographerName : SITE.photographerNameLatin}</p>
     </div>
 
     {
-      second && (
-        <figure class="plate plate-second">
+      lead && (
+        <figure class="plate">
           <button
             class="frame"
-            style={`aspect-ratio: ${second.width} / ${second.height};`}
+            style={`aspect-ratio: ${lead.width} / ${lead.height};`}
             data-lightbox-open
-            data-index={indexOf(second)}
-            aria-label={`放大查看：${describe(second, '摄影作品')}`}
+            data-index={indexOf(lead)}
+            aria-label={`${ui.zoomPrefix}${leadAlt}`}
           >
             <img
-              src={withBase(second.thumbnail)}
-              width={second.width}
-              height={second.height}
-              alt={describe(second, '摄影作品')}
-              sizes="20vw"
+              src={withBase(lead.src)}
+              width={lead.width}
+              height={lead.height}
+              alt={leadAlt}
+              sizes="(max-width: 860px) 100vw, 58vw"
               loading="eager"
+              fetchpriority="high"
               decoding="async"
               data-loaded="false"
             />
@@ -58,57 +62,14 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       )
     }
 
-    <div class="plates">
-      <figure class="plate plate-portrait">
-        <span class="frame portrait-frame">
-          <img
-            src={withBase(SITE.portrait)}
-            alt={SITE.portraitAlt}
-            sizes="(max-width: 860px) 45vw, 22vw"
-            loading="eager"
-            decoding="async"
-            data-loaded="false"
-          />
-        </span>
-        <figcaption class="meta portrait-caption">摄影师</figcaption>
-      </figure>
-
-      {
-        lead && (
-          <figure class="plate plate-lead">
-            <button
-              class="frame"
-              style={`aspect-ratio: ${lead.width} / ${lead.height};`}
-              data-lightbox-open
-              data-index={indexOf(lead)}
-              aria-label={`放大查看：${describe(lead, '代表摄影作品')}`}
-            >
-              <img
-                src={withBase(lead.src)}
-                width={lead.width}
-                height={lead.height}
-                alt={describe(lead, '代表摄影作品')}
-                sizes="(max-width: 860px) 100vw, 62vw"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async"
-                data-loaded="false"
-              />
-            </button>
-          </figure>
-        )
-      }
-    </div>
-
     <figure class="seal tagline">
       <span class="seal-mark">{SITE.motto}</span>
       <figcaption class="seal-latin">{SITE.mottoLatin}</figcaption>
       <figcaption class="creed">
-        <span class="creed-zh">{SITE.creed}</span>
+        {lang === 'zh' && <span class="creed-zh">{SITE.creed}</span>}
         <span class="creed-en">{SITE.creedLatin}</span>
       </figcaption>
     </figure>
-
   </div>
 
   <div class="scroll-cue" aria-hidden="true"><span></span></div>
@@ -128,14 +89,14 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--gutter);
-    row-gap: clamp(0.75rem, 2.5vh, 2rem);
+    row-gap: clamp(0.5rem, 1.6vh, 1.25rem);
     width: 100%;
     align-items: end;
   }
 
   /* ---------- 刊头 ---------- */
   .masthead {
-    grid-column: 1 / 10;
+    grid-column: 1 / 9;
     grid-row: 1;
     z-index: 3;
     pointer-events: none;
@@ -149,123 +110,50 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
 
   .latin {
     margin: 0.9rem 0 0;
-    font-size: 0.6875rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.4em;
     text-transform: uppercase;
     color: var(--text-muted);
   }
 
-  /* ---------- 图版 ---------- */
+  /* ---------- 代表作品 ---------- */
   .plate {
+    grid-column: 5 / 13;
+    grid-row: 2;
     margin: 0;
+    display: flex;
+    justify-content: flex-end;
   }
 
-  /* 人像不是作品，不可点；两张摄影作品可以点开看大图 */
-  .plate-portrait .frame {
-    cursor: default;
-  }
-
-  .plate button.frame {
+  .plate .frame {
+    height: clamp(12rem, 35svh, 26rem);
+    width: auto;
+    max-width: 100%;
     border: 0;
     padding: 0;
     display: block;
   }
 
-  /* 右上角的小作品 */
-  .plate-second {
-    grid-column: 10 / 13;
-    grid-row: 1;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .plate-second .frame {
-    height: clamp(4.5rem, 12svh, 8rem);
-    width: auto;
-    max-width: 100%;
-  }
-
-  /*
-    人像 + 代表作品放在同一个 flex 容器里，
-    人像用负的右外边距压在作品上 —— 不管照片是横是竖，重叠关系都成立。
-  */
-  .plates {
-    grid-column: 1 / 13;
-    grid-row: 2;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    min-width: 0;
-  }
-
-  .plate-portrait {
-    position: relative;
-    z-index: 2;
-    margin-right: clamp(-4.5rem, -5vw, -1.5rem);
-    margin-bottom: clamp(-3.5rem, -5vh, -1rem);
-    flex: 0 0 auto;
-  }
-
-  .portrait-frame {
-    display: block;
-    position: relative;
-    aspect-ratio: 4 / 5;
-    height: clamp(8.5rem, 25svh, 17rem);
-    width: auto;
-    overflow: hidden;
-    background: var(--photo-rest);
-  }
-
-  .portrait-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .portrait-caption {
-    margin-top: 0.7rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-size: 0.625rem;
-  }
-
-  .plate-lead {
-    position: relative;
-    z-index: 1;
-    flex: 0 1 auto;
-    min-width: 0;
-  }
-
-  .plate-lead .frame {
-    height: clamp(12.5rem, 36svh, 26.5rem);
-    width: auto;
-    max-width: 100%;
-  }
-
-  /* ---------- 文字 ---------- */
-  .tagline {
-    grid-column: 1 / 8;
-    grid-row: 3;
-    margin: clamp(1.75rem, 4.5vh, 3rem) 0 0;
-  }
-
+  /* ---------- 印 ---------- */
   .tagline {
     grid-column: 1 / 9;
+    grid-row: 3;
+    margin: clamp(1.5rem, 3.5vh, 2.5rem) 0 0;
   }
 
   .tagline .seal-mark {
-    font-size: clamp(2.75rem, 4.6vw, 4.25rem);
+    font-size: clamp(3rem, 5.2vw, 4.75rem);
   }
 
   .creed {
     display: grid;
-    gap: 0.35rem;
-    margin-top: clamp(0.4rem, 0.7vw, 0.6rem);
+    gap: 0.4rem;
+    margin-top: clamp(0.5rem, 1vw, 0.8rem);
   }
 
   .creed-zh {
     font-family: var(--font-serif);
-    font-size: clamp(1.0625rem, 1.55vw, 1.375rem);
+    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
     line-height: 1.5;
     letter-spacing: 0.06em;
     color: var(--text);
@@ -273,9 +161,9 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
 
   .creed-en {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 300;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     color: var(--text-muted);
   }
 
@@ -308,7 +196,7 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
     }
   }
 
-  /* 矮屏幕：不再强求一屏收满，让内容自然展开 */
+  /* 矮屏幕：不再强求一屏收满 */
   @media (max-height: 660px) {
     .cover {
       min-height: auto;
@@ -331,48 +219,24 @@ function describe(photo: (typeof photos)[number] | undefined, fallback: string) 
       grid-column: 1 / -1;
     }
 
-    .plate-second {
-      display: none;
-    }
-
-    /* 手机上让 .plates 退出布局，人像和作品直接回到网格里，
-       这样摄影理念可以贴在人像右边，不浪费半屏空白。 */
-    .plates {
-      display: contents;
-    }
-
-    .plate-lead {
+    .plate {
       grid-column: 1 / -1;
-      grid-row: 2;
-      margin-top: clamp(0.75rem, 3vw, 1.5rem);
+      justify-content: stretch;
+      margin-top: clamp(1rem, 4vw, 1.75rem);
     }
 
-    .plate-lead .frame {
+    .plate .frame {
       height: auto;
       width: 100%;
     }
 
-    .plate-portrait {
-      grid-column: 1 / 5;
-      grid-row: 3;
-      margin: clamp(1.5rem, 6vw, 2.5rem) 0 0;
-      align-self: start;
-    }
-
-    .portrait-frame {
-      height: auto;
-      width: 100%;
-    }
-
-    /* 「思」单独占一行、贴左，英文才不会伸进右侧的朱染里 */
     .tagline {
       grid-column: 1 / -1;
-      grid-row: 4;
-      margin: clamp(1.75rem, 7vw, 2.75rem) 0 0;
+      margin-top: clamp(1.75rem, 7vw, 2.75rem);
     }
 
     .creed-zh {
-      font-size: 1.0625rem;
+      font-size: 1.125rem;
     }
 
     .scroll-cue {

@@ -1,0 +1,21 @@
+---
+/*
+  英文版 —— 和中文版用的是同一批组件。
+  语言由 URL 里的 /en 决定（src/lib/i18n.ts 的 getLang），
+  所以这里不需要传任何参数，也不会有两套需要各自维护的代码。
+*/
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroCover from '../../components/HeroCover.astro';
+import FeaturedEditorial from '../../components/FeaturedEditorial.astro';
+import MoreWorks from '../../components/MoreWorks.astro';
+import AboutTeaser from '../../components/AboutTeaser.astro';
+import Lightbox from '../../components/Lightbox.astro';
+---
+
+<BaseLayout overlayHeader>
+  <HeroCover />
+  <FeaturedEditorial />
+  <MoreWorks />
+  <AboutTeaser />
+  <Lightbox />
+</BaseLayout>

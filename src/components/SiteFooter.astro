@@ -1,6 +1,15 @@
 ---
-import { SITE, NAV } from '../config/site';
-import { withBase } from '../lib/paths';
+import { SITE } from '../config/site';
+import { getLang, localePath, t } from '../lib/i18n';
+
+const lang = getLang(Astro.url);
+const ui = t(lang);
+
+const NAV = [
+  { label: ui.navWorks, href: 'gallery' },
+  { label: ui.navSelected, href: '#featured' },
+  { label: ui.navAbout, href: 'about' },
+];
 
 const year = new Date().getFullYear();
 const span =
@@ -10,8 +19,10 @@ const span =
 <footer class="site-footer">
   <div class="shell inner">
     <div>
-      <p class="name">{SITE.photographerName}</p>
-      <p class="meta">{SITE.photographerNameLatin} · 个人摄影作品集</p>
+      <p class="name">{lang === 'en' ? SITE.photographerNameLatin : SITE.photographerName}</p>
+      <p class="meta">
+        {lang === 'en' ? SITE.photographerName : SITE.photographerNameLatin} · {ui.siteTagline}
+      </p>
     </div>
 
     <nav class="links" aria-label="页脚导航">
@@ -19,16 +30,18 @@ const span =
         NAV.map((item) => (
           <a
             class="meta"
-            href={item.href.startsWith('#') ? withBase('') + item.href : withBase(item.href)}
+            href={item.href.startsWith('#') ? localePath(lang) + item.href : localePath(lang, item.href)}
           >
             {item.label}
           </a>
         ))
       }
-      {SITE.email && <a class="meta" href={`mailto:${SITE.email}`}>联系</a>}
+      {SITE.email && <a class="meta" href={`mailto:${SITE.email}`}>{ui.contact}</a>}
     </nav>
 
-    <p class="meta copyright">© {span} {SITE.photographerName}. 版权所有，未经许可请勿使用照片。</p>
+    <p class="meta copyright">
+      © {span} {lang === 'en' ? SITE.photographerNameLatin : SITE.photographerName}. {ui.rights}
+    </p>
   </div>
 </footer>
 
